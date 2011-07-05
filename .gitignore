@@ -1,0 +1,3 @@
+scanner/*.beam
+parser/*.beam
+*.beam
