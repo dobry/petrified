@@ -1,2 +1,2 @@
-{'scanner/*',[]}.
-{'parser/*',[]}.
+{'scanner/*', []}.
+{'tests/*', []}.

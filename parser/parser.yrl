@@ -11,7 +11,6 @@ block -> places: '$1'.
 block -> transitions: '$1'.
 block -> arcs: '$1'.
 block -> settings: '$1'.
-block -> '$end'.
 
 places -> places_tok plines end_tok places_tok: {places,  ['$2']}.
 plines -> pline plines: {place, '$1'}, '$2'.
@@ -28,5 +27,5 @@ alines -> aline alines: {arc, '$1'}, '$2'.
 alines -> aline: {arc, '$1'}.
 aline -> ident ident ident: {'$1', '$2', '$3'}.
 
-settings -> settings_tok slines settings_tok.
+settings -> settings_tok slines end_tok settings_tok.
 slines -> '$empty'.

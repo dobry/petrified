@@ -1,18 +1,26 @@
 -module(k).
--export([k/0, start/0]).
+-export([all/0, parser/0, k/0, start/0, reload/1]).
+
+all() ->
+  parser(),
+  k().
+  
+parser() ->
+  yecc:file("parser/parser.yrl"),
+  make:files(["parser/parser.erl"]).
 
 k() ->
-  % modules to compile and (re)load
-  Modules = [reader, scanner, test1],
-  make:all(),%([debug_info]),
-  compile_and_reload(Modules).
+  io:format("~w~n", [make:all()]),%([debug_info]),
+  % modules to (re)load
+  Modules = [reader, scanner, test1, test2],
+  reload(Modules).
 
-compile_and_reload([]) ->
+reload([]) ->
   ok;
-compile_and_reload([Module | Rest]) ->
+reload([Module | Rest]) ->
   code:purge(Module),
-  code:load_file(Module),
-  compile_and_reload(Rest).
+  io:format("loading: ~w~n", [code:load_file(Module)]),
+  reload(Rest).
 
 start() ->
   pman:start().

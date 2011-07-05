@@ -1,12 +1,17 @@
 -module(scanner).
 -export([tokenize/1]).
 
+%%% interface
+
 tokenize(File) ->
   reader:init(File),
   Tok_List = lists:reverse(in_source([], [], 1)),
   reader:close(),
   Tok_List.
-  
+
+
+%%% state functions
+
 in_source([], Tok_List, Line) ->
 %  Symbol = reader:next(),
 %  io:format("~c~n", [Symbol]),
@@ -39,10 +44,10 @@ in_ident(String, Tok_List, Line) ->
     Char when ((Char >= $a) and (Char =< $z)) or ((Char >= $A) and (Char =< $Z)) or 
               ((Char >= $0) and (Char =< $9)) or (Char == $_) 
               -> in_ident([Char | String], Tok_List, Line);
-    $\n -> in_source([], [{ident, Line, String} | Tok_List], Line + 1);
-    White when (White == $ ) or (White == $\t) -> in_white([], [{ident, Line, String} | Tok_List], Line);
-    $# -> in_comment([], [{ident, Line, String} | Tok_List], Line);
-    eof -> [{'$end', Line} | [{ident, Line, String} | Tok_List]]
+    $\n -> in_source([], [is_keyword(String, Line) | Tok_List], Line + 1);
+    White when (White == $ ) or (White == $\t) -> in_white([], [is_keyword(String, Line) | Tok_List], Line);
+    $# -> in_comment([], [is_keyword(String, Line) | Tok_List], Line);
+    eof -> [{'$end', Line} | [is_keyword(String, Line) | Tok_List]]
   end.
   
 in_white([], Tok_List, Line) ->
@@ -79,7 +84,7 @@ in_number(String, Tok_List, Line) ->
     $\n -> in_source([], [{num, Line, reverse_to_integer(String)} | Tok_List], Line + 1);
     Num when (Num >= $0) and (Num =< $9) -> in_number([Num | String], Tok_List, Line);
     White when (White == $ ) or (White == $\t) -> in_white([], [{num, Line, reverse_to_integer(String)} | Tok_List], Line);
-    $. -> in_dot([$. | [String]], Tok_List, Line);
+    $. -> in_dot([$. | String], Tok_List, Line);
     $# -> in_comment([], [{num, Line, reverse_to_integer(String)} | Tok_List], Line);
     eof ->
       [{'$end', Line} | [{num, Line, reverse_to_integer(String)} | Tok_List]]
@@ -98,17 +103,43 @@ in_float(String, Tok_List, Line) ->
 %  io:format("~c~n", [Symbol]),
 %  case Symbol of
   case reader:next() of
-    $# -> in_comment([], [{flo, Line, reverse_to_float(String)} | Tok_List], Line);
-    $\n -> in_source([], [{flo, Line, reverse_to_float(String)} | Tok_List], Line + 1);
-    Num when (Num >= $0) and (Num =< $9) -> in_float([Num | String], Tok_List, Line);
-    White when (White == $ ) or (White == $\t) -> in_white([], [{num, Line, reverse_to_float(String)} | Tok_List], Line);
-    eof -> [{'$end', Line} | [{flo, Line, reverse_to_float(String)} | Tok_List]]
+    $# -> 
+  io:format("~w~n", [String]),in_comment([], [{flo, Line, reverse_to_float(String)} | Tok_List], Line);
+    $\n -> 
+  io:format("~w~n", [String]),in_source([], [{flo, Line, reverse_to_float(String)} | Tok_List], Line + 1);
+    Num when (Num >= $0) and (Num =< $9) -> 
+  io:format("~w~n", [String]),in_float([Num | String], Tok_List, Line);
+    White when (White == $ ) or (White == $\t) -> 
+  io:format("~w~n", [String]),in_white([], [{num, Line, reverse_to_float(String)} | Tok_List], Line);
+    eof -> 
+  io:format("~w~n", [String]),[{'$end', Line} | [{flo, Line, reverse_to_float(String)} | Tok_List]]
   end.
 
+
+%%% helpers
+
 reverse_to_float(String) ->
+  io:format("~w~n", [String]),
   {Value, []} = string:to_float(lists:reverse(String)),
   Value.
 
 reverse_to_integer(String) ->
   {Value, []} = string:to_integer(lists:reverse(String)),
   Value.
+
+%% if given string is one of the keywords, is_keyword() return special token, if not, it returns standard {ident, Line, Value} tuple
+is_keyword(String, Line) ->
+  keyword(lists:reverse(String), Line).
+
+keyword("end", Line) ->
+  {end_tok, Line};
+keyword("places", Line) ->
+  {places_tok, Line};
+keyword("transitions", Line) ->
+  {transitions_tok, Line};
+keyword("arcs", Line) ->
+  {arcs_tok, Line};
+keyword("settings", Line) ->
+  {settings_tok, Line};
+keyword(String, Line) ->
+  {ident, Line, String}.

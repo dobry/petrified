@@ -1,7 +1,7 @@
 -module(reader).
--export([loop/2]).
+-export([loop/3]).
 -export([init/0, init/1]).
--export([open/1, close/0, next/0]).
+-export([filename/0, open/1, close/0, next/0]).
 
 %%% inner functions
 
@@ -11,7 +11,7 @@ init() ->
     true ->
       {error, "reader already exist"};
     false ->
-      register(reader, spawn(reader, loop, [[], []]))
+      register(reader, spawn(reader, loop, [[], [], none]))
   end.
   
 init(File) ->
@@ -19,18 +19,21 @@ init(File) ->
 	reader:open(File).
 
 %% mail loop of reader process
-loop(Line, Device) ->
+loop(Line, Device, Filename) ->
   receive
     {open, File, Pid} ->
       open_file(File, Pid);
     {get_char, Pid} ->
       {ok, C, New_Line} = get_char(Line, Device),
       Pid ! {character, C},
-      loop(New_Line, Device);
+      loop(New_Line, Device, Filename);
     {close_file, Pid} ->
       Pid ! file:close(Device);
+    {get_filename, Pid} ->
+      Pid ! {filename, Filename},
+      loop(Line, Device, Filename);
     Any ->
-      io:format("~w~n", [Any])
+      io:format("reader: wrong message command: ~w~n", [Any])
   end.
 
 %% returns next character, fetches new line if needed
@@ -50,10 +53,11 @@ open_file(File, Pid) ->
       Pid ! {error, Reason};
     {ok, Device} ->   
       Pid ! ok,       
-      loop([], Device)
+      loop([], Device, File)
   end.  
 
 %%% interface
+
 open(File) ->
   send({open, File, self()}),
   receive
@@ -74,6 +78,12 @@ next() ->
     {error, Msg} ->
       io:format("~p~n", [Msg]),
       error
+  end.
+
+filename() ->
+  send({get_filename, self()}),
+  receive
+    {filename, Filename} -> Filename
   end.
   
 %%% interface helpers
