@@ -7,7 +7,11 @@ all() ->
   
 parser() ->
   yecc:file("parser/parser.yrl"),
-  make:files(["parser/parser.erl"]).
+  make:files(["parser/parser.erl"]),
+  code:purge(parser),
+  %code:load_file(parser),
+  io:format("loading: ~w~n", [code:load_file(parser)]).
+
 
 k() ->
   io:format("~w~n", [make:all()]),%([debug_info]),
@@ -19,6 +23,7 @@ reload([]) ->
   ok;
 reload([Module | Rest]) ->
   code:purge(Module),
+  %code:load_file(Module),
   io:format("loading: ~w~n", [code:load_file(Module)]),
   reload(Rest).
 

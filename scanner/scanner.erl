@@ -103,23 +103,17 @@ in_float(String, Tok_List, Line) ->
 %  io:format("~c~n", [Symbol]),
 %  case Symbol of
   case reader:next() of
-    $# -> 
-  io:format("~w~n", [String]),in_comment([], [{flo, Line, reverse_to_float(String)} | Tok_List], Line);
-    $\n -> 
-  io:format("~w~n", [String]),in_source([], [{flo, Line, reverse_to_float(String)} | Tok_List], Line + 1);
-    Num when (Num >= $0) and (Num =< $9) -> 
-  io:format("~w~n", [String]),in_float([Num | String], Tok_List, Line);
-    White when (White == $ ) or (White == $\t) -> 
-  io:format("~w~n", [String]),in_white([], [{num, Line, reverse_to_float(String)} | Tok_List], Line);
-    eof -> 
-  io:format("~w~n", [String]),[{'$end', Line} | [{flo, Line, reverse_to_float(String)} | Tok_List]]
+    $# -> in_comment([], [{flo, Line, reverse_to_float(String)} | Tok_List], Line);
+    $\n -> in_source([], [{flo, Line, reverse_to_float(String)} | Tok_List], Line + 1);
+    Num when (Num >= $0) and (Num =< $9) -> in_float([Num | String], Tok_List, Line);
+    White when (White == $ ) or (White == $\t) -> in_white([], [{num, Line, reverse_to_float(String)} | Tok_List], Line);
+    eof -> [{'$end', Line} | [{flo, Line, reverse_to_float(String)} | Tok_List]]
   end.
 
 
 %%% helpers
 
 reverse_to_float(String) ->
-  io:format("~w~n", [String]),
   {Value, []} = string:to_float(lists:reverse(String)),
   Value.
 
