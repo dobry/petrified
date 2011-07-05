@@ -69,11 +69,11 @@ in_zero($0, Tok_List, Line) ->
 %  io:format("~c~n", [Symbol]),
 %  case Symbol of
   case reader:next() of
-    $# -> in_comment([], [{num, Line, 0} | Tok_List], Line);
-    $\n -> in_source([], [{num, Line, 0} | Tok_List], Line + 1);
-    White when (White == $ ) or (White == $\t) -> in_white([], [{num, Line, 0} | Tok_List], Line);
+    $# -> in_comment([], [{'integer', Line, 0} | Tok_List], Line);
+    $\n -> in_source([], [{'integer', Line, 0} | Tok_List], Line + 1);
+    White when (White == $ ) or (White == $\t) -> in_white([], [{'integer', Line, 0} | Tok_List], Line);
     $. -> in_dot([$., $0], Tok_List, Line);
-    eof -> [{'$end', Line} | [{num, Line, 0} | Tok_List]]
+    eof -> [{'$end', Line} | [{'integer', Line, 0} | Tok_List]]
   end.
   
 in_number(String, Tok_List, Line) ->
@@ -81,13 +81,13 @@ in_number(String, Tok_List, Line) ->
 %  io:format("~c~n", [Symbol]),
 %  case Symbol of
   case reader:next() of
-    $\n -> in_source([], [{num, Line, reverse_to_integer(String)} | Tok_List], Line + 1);
+    $\n -> in_source([], [{'integer', Line, reverse_to_integer(String)} | Tok_List], Line + 1);
     Num when (Num >= $0) and (Num =< $9) -> in_number([Num | String], Tok_List, Line);
-    White when (White == $ ) or (White == $\t) -> in_white([], [{num, Line, reverse_to_integer(String)} | Tok_List], Line);
+    White when (White == $ ) or (White == $\t) -> in_white([], [{'integer', Line, reverse_to_integer(String)} | Tok_List], Line);
     $. -> in_dot([$. | String], Tok_List, Line);
-    $# -> in_comment([], [{num, Line, reverse_to_integer(String)} | Tok_List], Line);
+    $# -> in_comment([], [{'integer', Line, reverse_to_integer(String)} | Tok_List], Line);
     eof ->
-      [{'$end', Line} | [{num, Line, reverse_to_integer(String)} | Tok_List]]
+      [{'$end', Line} | [{'integer', Line, reverse_to_integer(String)} | Tok_List]]
   end.
 
 in_dot(String, Tok_List, Line) ->
@@ -103,11 +103,11 @@ in_float(String, Tok_List, Line) ->
 %  io:format("~c~n", [Symbol]),
 %  case Symbol of
   case reader:next() of
-    $# -> in_comment([], [{flo, Line, reverse_to_float(String)} | Tok_List], Line);
-    $\n -> in_source([], [{flo, Line, reverse_to_float(String)} | Tok_List], Line + 1);
+    $# -> in_comment([], [{'float', Line, reverse_to_float(String)} | Tok_List], Line);
+    $\n -> in_source([], [{'float', Line, reverse_to_float(String)} | Tok_List], Line + 1);
     Num when (Num >= $0) and (Num =< $9) -> in_float([Num | String], Tok_List, Line);
-    White when (White == $ ) or (White == $\t) -> in_white([], [{num, Line, reverse_to_float(String)} | Tok_List], Line);
-    eof -> [{'$end', Line} | [{flo, Line, reverse_to_float(String)} | Tok_List]]
+    White when (White == $ ) or (White == $\t) -> in_white([], [{'float', Line, reverse_to_float(String)} | Tok_List], Line);
+    eof -> [{'$end', Line} | [{'float', Line, reverse_to_float(String)} | Tok_List]]
   end.
 
 
@@ -121,7 +121,7 @@ reverse_to_integer(String) ->
   {Value, []} = string:to_integer(lists:reverse(String)),
   Value.
 
-%% if given string is one of the keywords, is_keyword() return special token, if not, it returns standard {ident, Line, Value} tuple
+%% if given string is one of the keywords, is_keyword() return special token, if not, it returns standard {identifier, Line, Value} tuple
 is_keyword(String, Line) ->
   keyword(lists:reverse(String), Line).
 
@@ -136,4 +136,4 @@ keyword("arcs", Line) ->
 keyword("settings", Line) ->
   {settings_tok, Line};
 keyword(String, Line) ->
-  {ident, Line, String}.
+  {identifier, Line, String}.

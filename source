@@ -16,6 +16,8 @@ transitions
   t2 10 15 2 2.5
 end transitions
 arcs
+end arcs
+arcs
   #name from to
   a0 p0 t0
   a1 t0 p1

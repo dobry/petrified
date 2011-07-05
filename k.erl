@@ -1,5 +1,13 @@
 -module(k).
--export([all/0, parser/0, k/0, start/0, reload/1]).
+-export([a/0, all/0, parser/0, k/0, start/0, reload/1]).
+
+a() ->
+  io:format("compile: ~w~n", [compile:file("scanner/reader.erl")]),
+  io:format("compile: ~w~n", [compile:file("scanner/scanner.erl")]),
+  io:format("generate parser: ~w~n", [yecc:file("parser/parser.yrl")]),
+  io:format("compile: ~w~n", [compile:file("parser/parser.erl")]),
+  io:format("compile: ~w~n", [compile:file("tests/test1.erl")]),
+  io:format("compile: ~w~n", [compile:file("tests/test2.erl")]).
 
 all() ->
   parser(),
