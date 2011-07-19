@@ -1,7 +1,8 @@
 #to jest komentarz
-#P = {p0, p1, p2}
-#T = {t0, t1, t2}
-#A = {(p0, t0), (t0, p1), (p1, t1), (t1, p2), (p2, t2), (t2, p0)}
+#P = [p0, p1, p2]
+#T = [t0, t1, t2]
+#A = [{p0, t0}, {t0, p1}, {p1, t1}, {t1, p2}, {p2, t2}, {t2, p0}]
+#M = [{p0, 2}, {p1, 1}]
 
 places
   #name positionX positionY marking
@@ -16,8 +17,6 @@ transitions
   t2 10 15 2 2.5
 end transitions
 arcs
-end arcs
-arcs
   #name from to
   a0 p0 t0
   a1 t0 p1
@@ -26,3 +25,7 @@ arcs
   a4 p2 t2
   a5 t2 p0
 end arcs
+markers
+  p0 2
+  p1 1
+end markers

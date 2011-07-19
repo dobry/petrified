@@ -1,0 +1,35 @@
+Instalacja Nitrogen na Ubuntu:
+
+1. Ściągnij odpowiednią wersję Erlang/OTP (http://www.erlang.org/download.html):
+
+!!! Ważne !!!
+Sprawdź, z jaką wersją Erlanga współpracuje Nitrogen, ostatnio były to dwie wersje:
+  - R13B04
+  - R14B
+
+$ wget http://erlang.org/download/otp_src_R14B.tar.gz
+$ tar zxvf otp_src_R14B.tar.gz
+$ cd otp_src_R14B
+$ ./configure && make && sudo make /usr install
+
+Domyślnie instaluje się w /usr/local/lib/ i tworzy dowiązania w /usr/local/bin/.
+
+2. Nitrogen: 
+
+Ściągnij najnowszą paczkę z http://nitrogenproject.com/downloads
+
+Ustaw zmienną ERL_LIBS (nadal potrzebne?):
+$ export ERL_LIBS=/usr/local/lib/erlang/lib/
+
+Rozpakuj, wejdź do katalogu.
+Masz do wyboru cztery serwery http (inets, mochiweb, webmachine, yaws), uruchom:
+$ make rel_inets
+lub jeden z:
+$ ./apps/get_mochiweb.sh || $ ./apps/get_webmachine.sh || $ ./apps/get_yaws.sh
+i następnie jeden z:
+$ make rel_mochiweb || $ make rel_webmachine || $ make rel_yaws
+
+Na przykład:
+$ ./apps/get_mochiweb.sh && make rel_mochiweb
+
+W ./rel/nitrogen znajdziesz gotowy do użycia nitrogen.
