@@ -12,16 +12,18 @@ body() ->
   [
     #panel { id = "app", body = [
       #panel { id = "floating_messages", body = #flash{} },
-      #panel { id = "menus", body = "
-        Menu<br />
-        item1<br />
-        item2<br />
-        item3<br />
-        item4<br />
-        item5<br />
-      " },
+      #panel { id = "menus", body = 
+        #dropdown { id = menu_drop, postback = menu_select, options = 
+        [
+          #option { text = "Pliki", value = "files" },
+          #option { text = "Elementy", value = "elements" }
+        ]}},
       #panel { id = "editor", body = "
         <canvas id=\"canvas\"></canvas>
       " }
     ]}
   ].
+
+event(menu_select) ->
+  Menu = wf:q(menu_drop),
+  wf:flash("You opened menu " ++ Menu ++ ".").

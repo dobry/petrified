@@ -11,6 +11,6 @@ title() -> "Petri Nets".
 body() -> 
   [
     "<h1>Hello in Petri Nets editor</h1><br />
-    <p><a href=\"petrinet\">Click to try it</a></p>"
+    <p><a href=\"./petrinet\">Click to try it</a></p>"
     
   ].
