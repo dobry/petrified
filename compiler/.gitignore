@@ -1,5 +1,0 @@
-scanner/*.beam
-parser/*.beam
-*.beam
-parser/parser.erl
-erlang-programming.pdf
