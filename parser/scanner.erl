@@ -4,10 +4,15 @@
 %%% interface
 
 tokenize(File) ->
-  reader:init(File),
-  Tok_List = lists:reverse(in_source([], [], 1)),
-  reader:close(),
-  Tok_List.
+  case reader:init(File) of
+    ok ->
+      Tok_List = lists:reverse(in_source([], [], 1)),
+      reader:close(),
+      Tok_List;
+    {error, Reason} ->
+      {error, Reason}
+  end.   
+  
 
 
 %%% state functions

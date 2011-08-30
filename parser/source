@@ -25,7 +25,3 @@ arcs
   a4 p2 t2
   a5 t2 p0
 end arcs
-markers
-  p0 2
-  p1 1
-end markers

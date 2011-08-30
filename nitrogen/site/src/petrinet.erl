@@ -11,7 +11,11 @@ title() -> "Petri Nets".
 body() -> 
   [
     #panel { id = "app", body = [
-      #panel { id = "floating_messages", body = #flash{} },
+      #panel { id = "floating_messages", body =
+      [
+        #hidden { id = "receiver" },
+        #flash {}
+      ] },
       #panel { id = "menus", body = 
       [
         #dropdown { id = menu_drop, postback = menu_select, options = 
@@ -32,7 +36,7 @@ event(menu_select) ->
   Menu = wf:q(menu_drop),
   wf:flash("You opened menu " ++ Menu ++ ".").
 
-% TODO make custom element of this function
+% TODO make custom element from this function
 menu_files() ->
   [
     "Wczytaj plik",
@@ -47,8 +51,14 @@ finish_upload_event(_Tag, undefined, _, _) ->
     wf:flash("Please select a file."),
     ok;
 
-finish_upload_event(_Tag, FileName, LocalFileData, Node) ->
+finish_upload_event(_Tag, _FileName, LocalFileData, Node) ->
     FileSize = filelib:file_size(LocalFileData),
-    wf:flash(wf:f("Uploaded file: ~s (~p bytes) on node ~s.", [FileName, FileSize, Node])),
+    wf:flash(wf:f("Uploaded file: ~s (~p bytes) on node ~s.~nParsing...", [LocalFileData, FileSize, Node])),
+    io:format("uploaded~n", []),
+    Parsed = parser:parse(scanner:tokenize(LocalFileData)),
+    io:format("parsed~n", []),
+    wf:flash(wf:f("Parsed:\n~w", [Parsed])),
+    JSONed = mochijson2:encode(Parsed),
+    wf:flash(wf:f("Parsed:\n~w", [JSONed])),
     ok.
 
