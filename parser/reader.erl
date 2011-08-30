@@ -93,9 +93,4 @@ is_registered() ->
   lists:any(fun(Elem) -> Elem == reader end, Registered).  
 
 send(Message) ->
-  case is_registered() of
-    true ->
-      reader ! Message;
-    false ->
-      {error, "reader does not exist, use init first"}
-  end.
+  reader ! Message.
