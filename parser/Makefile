@@ -1,6 +1,6 @@
-all: reader.beam scanner.beam parser.beam logger.beam
+all: reader.beam scanner.beam parser.beam logger.beam petrijson.beam
 	mkdir -p ../nitrogen/lib/parser
-	cp reader.beam scanner.beam parser.beam logger.beam ../nitrogen/lib/parser/
+	cp reader.beam scanner.beam parser.beam logger.beam petrijson.beam ../nitrogen/lib/parser/
 
 reader.beam: reader.erl
 	erl -compile reader.erl
@@ -14,6 +14,10 @@ parser.beam: parser.yrl
 
 logger.beam: logger.erl
 	erl -compile logger.erl
+
+petrijson.beam: petrijson.yrl
+	echo "yecc:file(petrijson.yrl)." | erl
+	erl -compile petrijson.erl
 
 clean:
 	rm *.beam

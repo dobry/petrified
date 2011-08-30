@@ -6,9 +6,9 @@
 
 places
   #name positionX positionY marking
-  p0 10 10
-  p1 20 10
-  p2 10 20
+  p0 10 10 1
+  p1 20 10 1
+  p2 10 20 1
 end places
 transitions
   #name positionX positionY weight delay
