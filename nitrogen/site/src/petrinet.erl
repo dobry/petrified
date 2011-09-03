@@ -26,47 +26,28 @@ body() ->
         #panel { id = menu_items, body = menu(files) }
       ]},
         
-      #panel { id = "editor", body = "
-        <canvas id=\"canvas\"></canvas>
-      " }
+      #droppable {
+        tag = canvas_drop,
+        accept_groups = menu_elements,
+        body = #panel { id = "editor", body = "
+          <canvas id=\"canvas\"></canvas>
+        " }
+      }
     ]}
   ].
+
 
 event(menu_select) ->
   Menu_name = wf:q(menu_drop),
   wf:flash("You opened menu " ++ Menu_name ++ "."),
   Menu = menu(list_to_atom(Menu_name)),
-  wf:update(menu_items, Menu).
+  wf:update(menu_items, Menu),
+  ok.
 
-
-%% menu context generators
-menu(files) ->
-  [
-    "Wczytaj plik",
-    #br {},
-    #upload { class = upload_field, tag = myUpload1, show_button = false }
-  ];
-menu(elements) ->
-  [
-    "Dodawaj elementy przeciągając je do edytora.",
-    #draggable
-    {
-      tag = drag_place,
-      group = menu_elements,
-      clone = true,
-      revert = false, % element comes back to initial place 
-      body = #image { image = "/images/place.png" } 
-    },
-    #draggable
-    {
-      tag = drag_transition,
-      group = menu_elements,
-      clone = true,
-      revert = false,
-      body = #image { image = "/images/transition.png" }
-    }
-  ].
-
+drop_event(Drag_tag, canvas_drop) ->
+  Message = wf:f("Dropped ~p on canvas.", [Drag_tag]),
+  wf:flash(Message),
+  ok.
 
 start_upload_event(myUpload1) ->
   fading_flash("Upload started.").
@@ -93,6 +74,9 @@ finish_upload_event(_Tag, _FileName, LocalFileData, Node) ->
   io:format("lauched js script~n"),
   ok.
 
+
+%%% helpers
+
 fading_flash(Msg) ->
   Id = wf:temp_id(),
   Ele = #label { id = Id, text = Msg },
@@ -100,4 +84,30 @@ fading_flash(Msg) ->
   %wf:wire(Ele, #effect { effect = slide, speed = 1000, options=[{direction,"up"}, {mode, hide}]}),
   wf:flash(Ele).
 
-
+%% menu context generators
+menu(files) ->
+  [
+    "Wczytaj plik",
+    #br {},
+    #upload { class = upload_field, tag = myUpload1, show_button = false }
+  ];
+menu(elements) ->
+  [
+    "Dodawaj elementy przeciągając je do edytora.",
+    #draggable
+    {
+      tag = place_drag,
+      group = menu_elements,
+      clone = true,
+      revert = false, % element comes back to initial place 
+      body = #image { image = "/images/place.png" } 
+    },
+    #draggable
+    {
+      tag = transition_drag,
+      group = menu_elements,
+      clone = true,
+      revert = false,
+      body = #image { image = "/images/transition.png" }
+    }
+  ].
