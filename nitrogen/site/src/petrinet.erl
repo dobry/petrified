@@ -23,7 +23,7 @@ body() ->
           #option { text = "Pliki", value = "files" },
           #option { text = "Elementy", value = "elements" }
         ]},
-        #panel { id = menu_items, body = menu_files() }
+        #panel { id = menu_items, body = menu(files) }
       ]},
         
       #panel { id = "editor", body = "
@@ -33,16 +33,24 @@ body() ->
   ].
 
 event(menu_select) ->
-  Menu = wf:q(menu_drop),
-  wf:flash("You opened menu " ++ Menu ++ ".").
+  Menu_name = wf:q(menu_drop),
+  wf:flash("You opened menu " ++ Menu_name ++ "."),
+  Menu = menu(list_to_atom(Menu_name)),
+  wf:update(menu_items, Menu).
 
-% TODO make custom element from this function
-menu_files() ->
+
+%% menu context generators
+menu(files) ->
   [
     "Wczytaj plik",
     #br {},
-    #upload { tag = myUpload1, show_button = false }%, button_text = "Wczytaj plik" }
+    #upload { class = upload_field, tag = myUpload1, show_button = false }
+  ];
+menu(elements) ->
+  [
+    "Dodawaj elementy przeciągając je do edytora."
   ].
+
 
 start_upload_event(myUpload1) ->
   fading_flash("Upload started.").
