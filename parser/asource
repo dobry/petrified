@@ -6,13 +6,13 @@
 
 places
   #name positionX positionY marking
-  wybitnie 10 10 1
+  wybitnie 50 50 1
 end places
 transitions
   #name positionX positionY weight delay
-  ciekawe 15 10 1 1.504
+  ciekawe 100 70 1 1.504
 end transitions
 arcs
   #name from to
-  nazwy p0 t0
+  nazwy wybitnie ciekawe
 end arcs

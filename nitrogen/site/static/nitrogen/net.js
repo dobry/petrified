@@ -77,7 +77,7 @@ net.net_constructor = function (_elements)
       ctx.translate(ele.x, ele.y);
       ctx.rotate(ele.angle);
       ctx.strokeStyle = style;
-      ctx.strokeRect(0, -pR, 2 * mR, 2 * pR);
+      ctx.strokeRect(- mR, -pR, 2 * mR, 2 * pR);
       ctx.restore();
     };
     
@@ -99,16 +99,18 @@ net.net_constructor = function (_elements)
     ele.draw = function ()
     {
       //alert("in net.draw_arc()");
-      /*ctx.save();
-      ctx.translate(x0, y0);
+      ctx.save();
+      ctx.moveTo(ele.from.x, ele.from.y);
       ctx.StrokeStyle = style;
-      ctx.lineTo(x1, x2);
+      ctx.lineTo(ele.to.x, ele.to.y);
       ctx.stroke();
-      // TODO rysowanie strzałki stycznej do łuku
-      ctx.fillStyle = style;
-      ctx.arc(0, 0, 10, 0, Math.PI * 2, true);
-      ctx.fill();
-      ctx.restore();*/
+      
+      // grot łuku
+      // TODO rysowanie grotu stycznego do łuku
+      //ctx.arc(0, 0, 10, mR, Math.PI * 2, true);
+      //ctx.fill();
+      
+      ctx.restore();
     };
     
     return ele;
