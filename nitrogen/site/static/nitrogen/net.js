@@ -21,7 +21,17 @@ net.net_constructor = function (_elements)
     set(_elements);
   }
 
+  function copyAtributes(ele, obj)
+  {
+    var name;
 
+    for (name in obj) {
+      if (typeof obj[name] !== 'function') {
+        ele[name] = obj[name];
+      }
+    }
+  };
+  
 /*--public--------------------------------------------------------------------*/
 
   // net elements constructors
@@ -31,16 +41,10 @@ net.net_constructor = function (_elements)
   that.constructors['place'] = function (obj)
   {
     var ele = {};
-    var name;
     
-    // copy initialization values
-    for (name in obj) {
-      if (typeof obj[name] !== 'function') {
-        ele[name] = obj[name];
-      }
-    }
-
-    // add drawing function
+    copyAtributes(ele, obj);
+    ele.arcs = [];
+    
     ele.draw = function ()
     {
       //alert("in net.draw_place()");
@@ -61,18 +65,11 @@ net.net_constructor = function (_elements)
   that.constructors['transition'] = function (obj)
   {
     var ele = {};
-    var name;
     
-    // copy initialization values
-    for (name in obj) {
-      if (typeof obj[name] !== 'function') {
-        ele[name] = obj[name];
-      }
-    }
-
+    copyAtributes(ele, obj);
+    ele.arcs = [];
     ele.angle = 0;
     
-    // add drawing function
     ele.draw = function ()
     {
       //alert("in net.draw_transition()");
@@ -91,16 +88,14 @@ net.net_constructor = function (_elements)
   that.constructors['arc'] = function (obj)
   {
     var ele = {};
-    var name;
     
-    // copy initialization values
-    for (name in obj) {
-      if (typeof obj[name] !== 'function') {
-        ele[name] = obj[name];
-      }
-    }
+    copyAtributes(ele, obj);
 
-    // add drawing function
+    ele.from = that.get(ele.from);
+    ele.to = that.get(ele.to);
+    ele.from.arcs.push(ele);
+    ele.to.arcs.push(ele);
+
     ele.draw = function ()
     {
       //alert("in net.draw_arc()");
