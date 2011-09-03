@@ -41,24 +41,37 @@ menu_files() ->
   [
     "Wczytaj plik",
     #br {},
-    #upload { tag = myUpload1, button_text = "Wczytaj plik" }
+    #upload { tag = myUpload1, show_button = false }%, button_text = "Wczytaj plik" }
   ].
 
 start_upload_event(myUpload1) ->
-    wf:flash("Upload started.").
+  fading_flash("Upload started.").
 
 finish_upload_event(_Tag, undefined, _, _) ->
-    wf:flash("Please select a file."),
-    ok;
+  fading_flash("Please select a file."),
+  ok;
 
 finish_upload_event(_Tag, _FileName, LocalFileData, Node) ->
-    FileSize = filelib:file_size(LocalFileData),
-    wf:flash(wf:f("Uploaded file: ~s (~p bytes) on node ~s.~nParsing...", [LocalFileData, FileSize, Node])),
-    io:format("uploaded~n", []),
-    Parsed = parser:parse(scanner:tokenize(LocalFileData)),
-    io:format("parsed~n", []),
-    wf:flash(wf:f("Parsed:\n~w", [Parsed])),
-    JSONed = mochijson2:encode(Parsed),
-    wf:flash(wf:f("Parsed:\n~w", [JSONed])),
-    ok.
+  FileSize = filelib:file_size(LocalFileData),
+  fading_flash(wf:f("Uploaded file: ~s (~p bytes) on node ~s.~nParsing...", [LocalFileData, FileSize, Node])),
+  io:format("uploaded~n"),
+  
+  % prepare net data
+  {ok, Parsed} = petrijson:parse(scanner:tokenize(LocalFileData)),
+  %io:format("parsed~p", [Parsed]),
+  JSONed = mochijson2:encode(Parsed),
+  io:format("got net data~n"),
 
+  % execute js script with data
+  %io:format("~s~n", [JSONed]),
+  Script = wf:f("petri.start(~s);", [JSONed]),
+  wf:wire(#script { script = Script }),
+  io:format("lauched js script~n"),
+  ok.
+
+fading_flash(Msg) ->
+  Id = wf:temp_id(),
+  Ele = #label { id = Id, text = Msg },
+  %wf:wire(Id, #event{type='timer', delay=1000, actions=#hide{effect=blind, target=Id}}),
+  %wf:wire(Ele, #effect { effect = slide, speed = 1000, options=[{direction,"up"}, {mode, hide}]}),
+  wf:flash(Ele).
