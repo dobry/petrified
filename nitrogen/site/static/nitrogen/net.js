@@ -153,8 +153,21 @@ net.net_constructor = function (_elements)
     //alert("in net.start()");
     that.set(obj.elements);
     that.draw();
-  }
+  };
 
+  // get element by name
+  that.get = function (name)
+  {
+    var i;
+    for (i = 0; i < elements.length; i++)
+    {
+      if (elements[i].name === name)
+      {
+        return elements[i];
+      }
+    }
+  };
+  
   //alert("out of net_constructor()");
   return that;
 }; // end function net_constructor
