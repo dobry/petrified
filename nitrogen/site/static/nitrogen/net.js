@@ -8,6 +8,7 @@ net.net_constructor = function (_elements)
 
 /*--private-vars--------------------------------------------------------------*/
   var that = {};
+  var canvas = $('canvas');
   var ctx = document.getElementById('canvas').getContext('2d'); // reference to canvas context
   var elements = []; // list of elements to render
   var undef = []; // this array remembers holes in elements array, which emerge when an elements is removed
@@ -52,8 +53,10 @@ net.net_constructor = function (_elements)
       ctx.save();
       ctx.translate(ele.x, ele.y);
       ctx.strokeStyle = style;
+      ctx.beginPath();
       ctx.arc(0, 0, pR, 0, Math.PI * 2, true);
       ctx.stroke();
+      ctx.closePath();
       // TODO draw_markers(ele.markers);
       ctx.restore();
     };
@@ -119,8 +122,14 @@ net.net_constructor = function (_elements)
   // draw: renders all elements
   that.draw = function ()
   {
-    alert("in net.draw()");
+    //alert("in net.draw()");
     var i;
+    
+    // clear  canvas
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // draw all elements
     for (i = 0; i < elements.length; i++)
     {
       if (elements[i])
@@ -128,7 +137,7 @@ net.net_constructor = function (_elements)
         elements[i].draw();
       }
     }
-    alert("i = " + i + "; out of net.draw()");
+    //alert("i = " + i + "; out of net.draw()");
   };
   
   // set whole net
