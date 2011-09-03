@@ -21,7 +21,10 @@ net.net_constructor = function (_elements)
     set(_elements);
   }
 
-/*--net-elements-constructors-------------------------------------------------*/
+
+/*--public--------------------------------------------------------------------*/
+
+  // net elements constructors
   that.constructors = {};
 
   // place constructor
@@ -40,16 +43,15 @@ net.net_constructor = function (_elements)
     // add drawing function
     ele.draw = function ()
     {
-      alert("in net.draw_place()");
-      /*
+      //alert("in net.draw_place()");
       ctx.restore();
       ctx.save();
-      ctx.translate(x, y);
+      ctx.translate(ele.x, ele.y);
       ctx.strokeStyle = style;
       ctx.arc(0, 0, pR, 0, Math.PI * 2, true);
       ctx.stroke();
-      draw_markers(markers);
-      ctx.restore();*/
+      // TODO draw_markers(ele.markers);
+      ctx.restore();
     };
     
     return ele;
@@ -73,7 +75,7 @@ net.net_constructor = function (_elements)
     // add drawing function
     ele.draw = function ()
     {
-      alert("in net.draw_transition()");
+      //alert("in net.draw_transition()");
       /*
       ctx.save();
       ctx.translate(x, y);
@@ -102,7 +104,7 @@ net.net_constructor = function (_elements)
     // add drawing function
     ele.draw = function ()
     {
-      alert("in net.draw_arc()");
+      //alert("in net.draw_arc()");
       /*ctx.save();
       ctx.translate(x0, y0);
       ctx.StrokeStyle = style;
@@ -118,9 +120,6 @@ net.net_constructor = function (_elements)
     return ele;
   };
   
-  
-/*--public--------------------------------------------------------------------*/
-
   // draw: renders all elements
   that.draw = function ()
   {
@@ -140,7 +139,6 @@ net.net_constructor = function (_elements)
   that.set = function (ele_array)
   { 
     //alert("in net.set()");
-    alert("in net.set() len: ");
     var i, ele;
     
     elements = [];
@@ -154,7 +152,6 @@ net.net_constructor = function (_elements)
   that.start = function (obj)
   {
     //alert("in net.start()");
-    //document.write(typeof set);
     that.set(obj.elements);
     that.draw();
   }
