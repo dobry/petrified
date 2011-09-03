@@ -7,14 +7,14 @@
 places
   #name positionX positionY marking
   p0 100 100 1
-  p1 200 100 1
-  p2 100 200 1
+  p1 300 100 1
+  p2 100 300 1
 end places
 transitions
   #name positionX positionY weight delay
-  t0 150 100 1 1.504
-  t1 150 150 3 1.10
-  t2 100 150 2 2.5
+  t0 200 100 1 1.504
+  t1 200 200 3 1.10
+  t2 100 200 2 2.5
 end transitions
 arcs
   #name from to
