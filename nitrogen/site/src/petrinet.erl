@@ -21,7 +21,8 @@ body() ->
         #dropdown { id = menu_drop, postback = menu_select, options = 
         [
           #option { text = "Pliki", value = "files" },
-          #option { text = "Elementy", value = "elements" }
+          #option { text = "Elementy", value = "elements" },
+          #option { text = "Właściwości", value = "properties" }
         ]},
         #panel { id = menu_items, body = menu(files) }
       ]},
@@ -37,9 +38,10 @@ body() ->
   ].
 
 
+%%% various event handlers
+
 event(menu_select) ->
   Menu_name = wf:q(menu_drop),
-  wf:flash("You opened menu " ++ Menu_name ++ "."),
   Menu = menu(list_to_atom(Menu_name)),
   wf:update(menu_items, Menu),
   ok.
@@ -75,7 +77,7 @@ finish_upload_event(_Tag, _FileName, LocalFileData, Node) ->
   ok.
 
 
-%%% helpers
+%%% module helpers
 
 fading_flash(Msg) ->
   Id = wf:temp_id(),
@@ -110,4 +112,8 @@ menu(elements) ->
       revert = false,
       body = #image { image = "/images/transition.png" }
     }
+  ];
+menu(properties) ->
+  [
+    "Właściwości zaznaczonego elementu."
   ].
