@@ -76,13 +76,12 @@ net.net_constructor = function (_elements)
     ele.draw = function ()
     {
       //alert("in net.draw_transition()");
-      /*
       ctx.save();
-      ctx.translate(x, y);
-      ctx.rotate(angle);
-      ctx.strokeStyle = style;  
+      ctx.translate(ele.x, ele.y);
+      ctx.rotate(ele.angle);
+      ctx.strokeStyle = style;
       ctx.strokeRect(0, -pR, 2 * mR, 2 * pR);
-      ctx.restore();*/
+      ctx.restore();
     };
     
     return ele;
