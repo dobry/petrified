@@ -48,7 +48,23 @@ menu(files) ->
   ];
 menu(elements) ->
   [
-    "Dodawaj elementy przeciągając je do edytora."
+    "Dodawaj elementy przeciągając je do edytora.",
+    #draggable
+    {
+      tag = drag_place,
+      group = menu_elements,
+      clone = true,
+      revert = false, % element comes back to initial place 
+      body = #image { image = "/images/place.png" } 
+    },
+    #draggable
+    {
+      tag = drag_transition,
+      group = menu_elements,
+      clone = true,
+      revert = false,
+      body = #image { image = "/images/transition.png" }
+    }
   ].
 
 
@@ -83,3 +99,5 @@ fading_flash(Msg) ->
   %wf:wire(Id, #event{type='timer', delay=1000, actions=#hide{effect=blind, target=Id}}),
   %wf:wire(Ele, #effect { effect = slide, speed = 1000, options=[{direction,"up"}, {mode, hide}]}),
   wf:flash(Ele).
+
+
