@@ -10,7 +10,8 @@ title() -> "Petri Nets".
 
 body() -> 
   [
-    #panel { id = "app", body = [
+    #panel { id = "app", body = 
+    [
       #panel { id = "floating_messages", body =
       [
         #hidden { id = "receiver" },
@@ -27,7 +28,8 @@ body() ->
         #panel { id = menu_items, body = menu(files) }
       ]},
         
-      #droppable {
+      #droppable
+      {
         tag = canvas_drop,
         accept_groups = menu_elements,
         body = #panel { id = "editor", body = "
@@ -49,6 +51,10 @@ event(menu_select) ->
 drop_event(Drag_tag, canvas_drop) ->
   Message = wf:f("Dropped ~p on canvas.", [Drag_tag]),
   wf:flash(Message),
+  % execute js script with data
+  Script = wf:f("petri.drop(\"~p\");", [Drag_tag]),
+  wf:wire(#script { script = Script }),
+  io:format("lauched js script:~n~s~n", [Script]),
   ok.
 
 start_upload_event(myUpload1) ->
@@ -98,7 +104,7 @@ menu(elements) ->
     "Dodawaj elementy przeciągając je do edytora.",
     #draggable
     {
-      tag = place_drag,
+      tag = place,
       group = menu_elements,
       clone = true,
       revert = false, % element comes back to initial place 
@@ -106,7 +112,7 @@ menu(elements) ->
     },
     #draggable
     {
-      tag = transition_drag,
+      tag = transition,
       group = menu_elements,
       clone = true,
       revert = false,

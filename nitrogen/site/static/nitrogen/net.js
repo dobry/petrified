@@ -1,5 +1,3 @@
-//document.write("net");
-
 var net = {};
 
 net.net_constructor = function (_elements)
@@ -7,20 +5,33 @@ net.net_constructor = function (_elements)
 
 
 /*--private-vars--------------------------------------------------------------*/
-  var that = {};
-  var canvas = $('canvas');
-  var ctx = document.getElementById('canvas').getContext('2d'); // reference to canvas context
-  var elements = []; // list of elements to render
-  var undef = []; // this array remembers holes in elements array, which emerge when an elements is removed
-  var style = "#000"; // all elements color
-  var mR = 5; // marker radius
-  var pR = 30; // place radius and half of transition length
+  var that = {},
+    canvas = document.getElementById('canvas'),
+    ctx = canvas.getContext('2d'), // reference to canvas context
+    elements = [], // list of elements to render
+    undef = [], // this array remembers holes in elements array, which emerge when an elements is removed
+    style = "#000", // all elements color
+    mR = 5, // marker radius
+    pR = 30, // place radius and half of transition length
+    counters = 
+    {
+      place: 0,
+      transition: 0
+    },
+    mousePos = { x: 0, y: 0 };
 
-
+  
   if (_elements)
   {
     set(_elements);
   }
+  
+  canvas.onmouseup = function(e)
+  {
+    e = e || window.event;
+    mousePos = { x: e.pageX, y: e.pageY };
+    //alert("mousePos(" + mousePos.x + ", " + mousePos.y + ")");
+  };
 
   function copyAtributes(ele, obj)
   {
@@ -144,13 +155,12 @@ net.net_constructor = function (_elements)
   that.set = function (ele_array)
   { 
     //alert("in net.set()");
-    var i, ele;
+    var i;
     
     elements = [];
     for (i = 0; i < ele_array.length; i++)
     {
-      ele = that.constructors[ele_array[i].type](ele_array[i]);
-      elements.push(ele);
+      that.add(ele_array[i]);
     }
   };
   
@@ -174,6 +184,26 @@ net.net_constructor = function (_elements)
     }
   };
   
-  //alert("out of net_constructor()");
+  that.add = function (proto)
+  {
+    //alert(proto);
+    var ele = that.constructors[proto.type](proto);
+    elements.push(ele);
+  };
+  
+  that.drop = function (name)
+  {
+    //alert("mousePos(" + mousePos.x + ", " + mousePos.y + ")");
+    alert(name + " mousePos(" + mousePos.x + ", " + mousePos.y + ")");
+//          name: name + counter.name
+    /*var obj = 
+    {
+      type: name,
+      x: mousePos.x,
+      y: mousePos.y
+    };
+    that.add()*/
+  };
+  
   return that;
 }; // end function net_constructor
