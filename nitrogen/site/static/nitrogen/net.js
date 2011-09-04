@@ -1,6 +1,6 @@
 var net = {};
 
-net.net_constructor = function (_elements)
+net.net_constructor = function (obj)
 {
 
 
@@ -18,22 +18,19 @@ net.net_constructor = function (_elements)
       place: 0,
       transition: 0
     },
-    mousePos = { x: 0, y: 0 };
+    mousePos = { x: 0, y: 0, fresh: false };
 
+  var feed = document.getElementById('feed');
   
-  if (_elements)
-  {
-    set(_elements);
-  }
-  
-  canvas.onmouseup = function(e)
+  canvas.onmousemove = function(e)
   {
     e = e || window.event;
-    mousePos = { x: e.pageX, y: e.pageY };
-    //alert("mousePos(" + mousePos.x + ", " + mousePos.y + ")");
+    mousePos = { x: e.pageX - that.offsetX, y: e.pageY - that.offsetY, fresh: true };
+    feed.innerHTML = "(" + mousePos.x + ", " + mousePos.y + ")";
+    //alert(feed.innerHTML + "mousePos(" + mousePos.x + ", " + mousePos.y + ")");
   };
 
-  function copyAtributes(ele, obj)
+  function setAtributes(ele, obj)
   {
     var name;
 
@@ -42,32 +39,41 @@ net.net_constructor = function (_elements)
         ele[name] = obj[name];
       }
     }
+    ele.x = ele.x || mousePos.x;
+    ele.y = ele.y || mousePos.y;
+    if (!ele.name)
+    {
+      ele.name = ele.type + counters[ele.type];
+      counters[ele.type]++;
+    }
   };
   
 /*--public--------------------------------------------------------------------*/
 
   // net elements constructors
   that.constructors = {};
+  that.offsetX = obj.offsetX || 30;
+  that.offsetY = obj.offsetY || 30;
 
   // place constructor
   that.constructors['place'] = function (obj)
   {
     var ele = {};
     
-    copyAtributes(ele, obj);
+    setAtributes(ele, obj);
     ele.arcs = [];
+    ele.markers = ele.markers || 0;
     
     ele.draw = function ()
     {
       //alert("in net.draw_place()");
-      ctx.restore();
       ctx.save();
       ctx.translate(ele.x, ele.y);
       ctx.strokeStyle = style;
       ctx.beginPath();
       ctx.arc(0, 0, pR, 0, Math.PI * 2, true);
-      ctx.stroke();
       ctx.closePath();
+      ctx.stroke();
       // TODO draw_markers(ele.markers);
       ctx.restore();
     };
@@ -80,9 +86,11 @@ net.net_constructor = function (_elements)
   {
     var ele = {};
     
-    copyAtributes(ele, obj);
+    setAtributes(ele, obj);
     ele.arcs = [];
     ele.angle = 0;
+    ele.w = ele.w || 1;
+    ele.delay = ele.delay || 1;
     
     ele.draw = function ()
     {
@@ -103,7 +111,7 @@ net.net_constructor = function (_elements)
   {
     var ele = {};
     
-    copyAtributes(ele, obj);
+    setAtributes(ele, obj);
 
     ele.from = that.get(ele.from);
     ele.to = that.get(ele.to);
@@ -188,21 +196,37 @@ net.net_constructor = function (_elements)
   {
     //alert(proto);
     var ele = that.constructors[proto.type](proto);
-    elements.push(ele);
+        // if hole in elements array exists 
+    if (undef.length !== 0)
+    {
+      var i = undef.pop();
+      elements[i] = ele;
+    }
+    else
+    {
+      elements.push(ele);
+    }
+  };
+  
+  that.set_mouse_pos = function (obj)
+  {
+    mousePos = obj;
   };
   
   that.drop = function (name)
   {
-    //alert("mousePos(" + mousePos.x + ", " + mousePos.y + ")");
-    alert(name + " mousePos(" + mousePos.x + ", " + mousePos.y + ")");
-//          name: name + counter.name
-    /*var obj = 
+    //if (mousePos.fresh)
     {
-      type: name,
-      x: mousePos.x,
-      y: mousePos.y
-    };
-    that.add()*/
+      alert(name + " mousePos(" + mousePos.x + ", " + mousePos.y + ")");
+      that.add({ type: name });
+      that.draw();
+      mousePos.fresh = false;
+    }
+    /*else
+    {
+      alert("waiting for position");
+      setTimeout(that.drop(name), 500);
+    }*/
   };
   
   return that;

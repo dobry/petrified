@@ -92,3 +92,7 @@ a:hover, a:active {
 #canvas {
   border: 1px solid orange;
 }
+
+.wfid_controls {
+  text-align: right;
+}

@@ -19,6 +19,7 @@ body() ->
       ] },
       #panel { id = "menus", body = 
       [
+        #panel { id = controls, body = "<label id=\"feed\">(0, 0)<label>" },
         #dropdown { id = menu_drop, postback = menu_select, options = 
         [
           #option { text = "Pliki", value = "files" },
@@ -49,8 +50,8 @@ event(menu_select) ->
   ok.
 
 drop_event(Drag_tag, canvas_drop) ->
-  Message = wf:f("Dropped ~p on canvas.", [Drag_tag]),
-  wf:flash(Message),
+  %Message = wf:f("Dropped ~p on canvas.", [Drag_tag]),
+  %wf:flash(Message),
   % execute js script with data
   Script = wf:f("petri.drop(\"~p\");", [Drag_tag]),
   wf:wire(#script { script = Script }),
