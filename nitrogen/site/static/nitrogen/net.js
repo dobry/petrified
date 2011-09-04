@@ -22,12 +22,20 @@ net.net_constructor = function (obj)
 
   var feed = document.getElementById('feed');
   
-  canvas.onmousemove = function(e)
+  canvas.onmouseup = function(e)
   {
-    e = e || window.event;
-    mousePos = { x: e.pageX - that.offsetX, y: e.pageY - that.offsetY, fresh: true };
-    feed.innerHTML = "(" + mousePos.x + ", " + mousePos.y + ")";
-    //alert(feed.innerHTML + "mousePos(" + mousePos.x + ", " + mousePos.y + ")");
+    try
+    {
+      e = e || window.event;
+      mousePos = { x: e.pageX - that.offsetX, y: e.pageY - that.offsetY, fresh: true };
+      feed.innerHTML = "(" + mousePos.x + ", " + mousePos.y + ")";
+      alert("onmouseup fired");
+    }
+    catch (er)
+    {
+      alert(er.description);
+      //alert(feed.innerHTML + "mousePos(" + mousePos.x + ", " + mousePos.y + ")");
+    }
   };
 
   function setAtributes(ele, obj)
@@ -52,8 +60,8 @@ net.net_constructor = function (obj)
 
   // net elements constructors
   that.constructors = {};
-  that.offsetX = obj.offsetX || 30;
-  that.offsetY = obj.offsetY || 30;
+  that.offsetX = obj ? obj.offsetX : 30;
+  that.offsetY = obj ? obj.offsetY : 30;
 
   // place constructor
   that.constructors['place'] = function (obj)
@@ -66,12 +74,11 @@ net.net_constructor = function (obj)
     
     ele.draw = function ()
     {
-      //alert("in net.draw_place()");
       ctx.save();
-      ctx.translate(ele.x, ele.y);
       ctx.strokeStyle = style;
+      ctx.lineWidth = 4;
       ctx.beginPath();
-      ctx.arc(0, 0, pR, 0, Math.PI * 2, true);
+      ctx.arc(ele.x, ele.y, pR, 0, Math.PI * 2, true);
       ctx.closePath();
       ctx.stroke();
       // TODO draw_markers(ele.markers);
@@ -99,6 +106,7 @@ net.net_constructor = function (obj)
       ctx.translate(ele.x, ele.y);
       ctx.rotate(ele.angle);
       ctx.strokeStyle = style;
+      ctx.lineWidth = 4;
       ctx.strokeRect(- mR, -pR, 2 * mR, 2 * pR);
       ctx.restore();
     };
@@ -216,13 +224,13 @@ net.net_constructor = function (obj)
   that.drop = function (name)
   {
     //if (mousePos.fresh)
-    {
-      alert(name + " mousePos(" + mousePos.x + ", " + mousePos.y + ")");
+    //{
+      //alert(name + " mousePos(" + mousePos.x + ", " + mousePos.y + ")");
       that.add({ type: name });
       that.draw();
       mousePos.fresh = false;
-    }
-    /*else
+    /*}
+    else
     {
       alert("waiting for position");
       setTimeout(that.drop(name), 500);

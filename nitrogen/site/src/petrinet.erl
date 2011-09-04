@@ -19,7 +19,7 @@ body() ->
       ] },
       #panel { id = "menus", body = 
       [
-        #panel { id = controls, body = "<label id=\"feed\">(0, 0)<label>" },
+        #panel { id = controls, body = "<label id=\"feed\">(0, 0)</label>" },
         #dropdown { id = menu_drop, postback = menu_select, options = 
         [
           #option { text = "Pliki", value = "files" },
@@ -28,14 +28,12 @@ body() ->
         ]},
         #panel { id = menu_items, body = menu(files) }
       ]},
-        
-      #droppable
+      
+      #panel { id = "editor", body = #droppable
       {
         tag = canvas_drop,
         accept_groups = menu_elements,
-        body = #panel { id = "editor", body = "
-          <canvas id=\"canvas\"></canvas>
-        " }
+        body = "<canvas id=\"canvas\"></canvas>" }
       }
     ]}
   ].
@@ -109,7 +107,7 @@ menu(elements) ->
       group = menu_elements,
       clone = true,
       revert = false, % element comes back to initial place 
-      body = #image { image = "/images/place.png" } 
+      body = #image { image = "/images/transition.png" }%place.png" } 
     },
     #draggable
     {
