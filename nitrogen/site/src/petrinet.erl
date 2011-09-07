@@ -103,19 +103,25 @@ menu(elements) ->
     "Dodawaj elementy przeciągając je do edytora.",
     #draggable
     {
-      tag = place,
-      group = menu_elements,
-      clone = true,
-      revert = false, % element comes back to initial place 
-      body = #image { image = "/images/transition.png" }%place.png" } 
-    },
-    #draggable
-    {
+      class = menu_item,
       tag = transition,
       group = menu_elements,
       clone = true,
       revert = false,
-      body = #image { image = "/images/transition.png" }
+      body = "<div class=\"element transition\"></div>"
+      %body = #image { image = "/images/transition.png" }
+    },
+    #draggable
+    {
+      class = menu_item,
+      tag = place,
+      group = menu_elements,
+      clone = true,
+      revert = false, % element comes back to initial place 
+      %body = "<div class=\"element transition\"></div>"
+      body = "<div class=\"element place\"></div>"
+      %body = #image { image = "/images/transition.png" }
+      %body = #image { image = "/images/place.png" } 
     }
   ];
 menu(properties) ->

@@ -22,14 +22,14 @@ net.net_constructor = function (obj)
 
   var feed = document.getElementById('feed');
   
-  canvas.onmouseup = function(e)
+  canvas.onmousemove = function(e)
   {
     try
     {
       e = e || window.event;
       mousePos = { x: e.pageX - that.offsetX, y: e.pageY - that.offsetY, fresh: true };
       feed.innerHTML = "(" + mousePos.x + ", " + mousePos.y + ")";
-      alert("onmouseup fired");
+      //alert("onmouseup fired");
     }
     catch (er)
     {

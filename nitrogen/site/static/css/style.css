@@ -96,3 +96,25 @@ a:hover, a:active {
 .wfid_controls {
   text-align: right;
 }
+
+.element {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.place { 
+  width: 56px; 
+  height: 56px; 
+  background: white;
+  -moz-border-radius: 30px; 
+  -webkit-border-radius: 30px; 
+  border-radius: 32px;
+  border: 4px solid black;
+}
+
+.transition { 
+  width: 6px; 
+  height: 56px; 
+  background: white;
+  border: 4px solid black;
+}
