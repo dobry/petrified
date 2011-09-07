@@ -1,3 +1,8 @@
+var is_array = function (value)
+{
+  return Object.prototype.toString.apply(value) === '[object Array]';
+};
+
 var net = {};
 
 net.net_constructor = function (obj)
@@ -10,13 +15,15 @@ net.net_constructor = function (obj)
     ctx = document.getElementById('canvas').getContext('2d'), // reference to canvas context
     style = "#000", // all elements color
     stroke = '#333',
+    strokeWidth = 3,
     fill = '#fff',
     mR = 5, // marker radius
     pR = 30, // place radius and half of transition length
     counters = // for naming purposes
     {
       place: 0,
-      transition: 0
+      transition: 0,
+      arc: 0
     },
     mousePos = { x: 0, y: 0, fresh: false };
 
@@ -54,9 +61,10 @@ net.net_constructor = function (obj)
   {
     var ele = new fabric.Circle({ radius: pR, stroke: stroke, fill: fill, top: obj.y, left: obj.x });
     
+    ele.lockScalingX = ele.lockScalingY = ele.lockRotation = true;
     ele.element = obj.element; // type of element [place|transition|arc]
     setName(ele, obj);
-    ele.arcs = [];
+    ele.arcs = []; // TODO place should be group instead of this
     ele.markers = ele.markers || 0;
 
     // TODO markers;    
@@ -69,9 +77,10 @@ net.net_constructor = function (obj)
   {
     var ele = new fabric.Rect({ left: obj.x, top: obj.y, stroke: stroke, fill: fill, width: 2 * mR, height: 2 * pR });   
 
+    ele.lockScalingX = ele.lockScalingY = true;
     ele.element = obj.element;
     setName(ele, obj);
-    ele.arcs = [];
+    ele.arcs = []; // TODO tranasition should be group instead of this
     ele.angle = obj.angle || 0;
     ele.weight = ele.weight || 1;
     ele.delay = ele.delay || 1;
@@ -82,33 +91,68 @@ net.net_constructor = function (obj)
   // arc constructor
   that.constructors['arc'] = function (obj)
   {
-    var ele = {};
-    
-    /*setAtributes(ele, obj);
-
-    ele.from = that.get(ele.from);
-    ele.to = that.get(ele.to);
-    ele.from.arcs.push(ele);
-    ele.to.arcs.push(ele);
-
-    ele.draw = function ()
+    // create arrow
+    var from, to, points;
+    if (obj.from)
     {
-      //alert("in net.draw_arc()");
-      ctx.save();
-      ctx.moveTo(ele.from.x, ele.from.y);
-      ctx.StrokeStyle = style;
-      ctx.lineTo(ele.to.x, ele.to.y);
-      ctx.stroke();
-      
-      // grot łuku
-      // TODO rysowanie grotu stycznego do łuku
-      //ctx.arc(0, 0, 10, mR, Math.PI * 2, true);
-      //ctx.fill();
-      
-      ctx.restore();
-    };*/
+      from = that.findByName(obj.from);
+      points = [from.left, from.top];
+    }
+    if (obj.to)
+    {
+      to = that.findByName(obj.to);
+      points.push(to.left);
+      points.push(to.top);
+    }
+    var ele = new fabric.Line(points);
+    ele.selectable = false;
+    ele.from = from;
+    ele.to = to;
+    ele.element = obj.element;
+    setName(ele, obj);
+    // create arrow points
+    var r1 = new fabric.Rect({ left: ele.get('x1'), top: ele.get('y1'), opacity: 0, width: 10, height: 10 });
+    r1.lockScalingX = r1.lockScalingY = r1.lockRotation = true;
+    r1.hasControls = false;
+    r1.arrow = ele;
+    r1.point_type = 'arrow_from';
+    ele.from.arcs.push(r1); // TODO place|tranasition should be group instead of this
+    var r2 = new fabric.Rect({ left: ele.get('x2'), top: ele.get('y2'), opacity: 0, width: 10, height: 10 });
+    r2.lockScalingX = r2.lockScalingY = r2.lockRotation = true;
+    r2.hasControls = false;
+    r2.arrow = ele;
+    r2.point_type = 'arrow_to';
+    ele.to.arcs.push(r2); // TODO place|tranasition should be group instead of this
+    // if points were moved, modify arrow
+    canvas.observe('object:moving', function(e)
+    {
+      var p = e.memo.target,
+          a = p.arrow;
+      if (p.point_type === 'arrow_from')
+      {
+        a.x1 = p.left;
+        a.y1 = p.top;
+        a.width = a.x2 - a.x1 || 1;
+        a.height = a.y2 - a.y1 || 1;
+        a.left = a.x1 + a.width / 2;
+        a.top = a.y1 + a.height / 2;
+        canvas.renderAll();
+      }
+      else if (p.point_type === 'arrow_to')
+      {
+        a.x2 = p.left;
+        a.y2 = p.top;
+        a.width = a.x2 - a.x1 || 1;
+        a.height = a.y2 - a.y1 || 1;
+        a.left = a.x1 + a.width / 2;
+        a.top = a.y1 + a.height / 2;
+        canvas.renderAll();
+      }
+    });
+
+    // TODO rysowanie grotu stycznego do łuku
     
-    return ele;
+    return [ele, r1, r2];
   };
   
   // set whole net
@@ -130,23 +174,38 @@ net.net_constructor = function (obj)
     that.renderAll;
   };
 
-  // get element by name
-  that.get = function (name)
+  that.findByName = function (name)
   {
-    var i;
-    for (i = 0; i < elements.length; i++)
+    var i, array = canvas.getObjects();
+    for (i = 0; i < array.length; i++)
     {
-      if (elements[i].name === name)
+      if (array[i].name === name)
       {
-        return elements[i];
+        return array[i];
       }
     }
+  };
+
+  that.get = function (i)
+  {
+    return canvas.item(i);
   };
   
   that.add = function (proto)
   {
     var ele = that.constructors[proto.type](proto);
-    canvas.add(ele);
+    if (is_array(ele))
+    {
+      var i;
+      for (i = 0; i < ele.length; i++)
+      {
+        canvas.add(ele[i]);
+      }
+    }
+    else
+    {
+      canvas.add(ele);
+    }
   };
   
   that.set_mouse_pos = function (obj)
