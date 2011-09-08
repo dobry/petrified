@@ -118,24 +118,17 @@ net.net_constructor = function (obj)
     ele.element = obj.element;
     setName(ele, obj);
     // create arrow points
-    var r1 = new fabric.Rect({ left: ele.get('x1'), top: ele.get('y1'), opacity: 0, width: 10, height: 10 });
-    r1.lockScalingX = r1.lockScalingY = r1.lockRotation = true;
-    r1.hasControls = false;
-    r1.arrow = ele;
-    r1.point_type = 'arrow_from';
+    var r1 = new fabric.ArrowPoint({ left: ele.get('x1'), top: ele.get('y1'), opacity: 0, width: 10, height: 10, arrow: ele, end: 'from' });
     ele.from.arcs.push(r1); // TODO place|tranasition should be group instead of this
-    var r2 = new fabric.Rect({ left: ele.get('x2'), top: ele.get('y2'), opacity: 0, width: 10, height: 10 });
-    r2.lockScalingX = r2.lockScalingY = r2.lockRotation = true;
-    r2.hasControls = false;
-    r2.arrow = ele;
-    r2.point_type = 'arrow_to';
+    var r2 = new fabric.ArrowPoint({ left: ele.get('x2'), top: ele.get('y2'), opacity: 0, width: 10, height: 10, arrow: ele, end: 'to' });
     ele.to.arcs.push(r2); // TODO place|tranasition should be group instead of this
     // if points were moved, modify arrow
     canvas.observe('object:moving', function(e)
     {
       var p = e.memo.target,
           a = p.arrow;
-      if (p.point_type === 'arrow_from')
+      //alert(p.type);
+      if (p.end === 'from')
       {
         a.x1 = p.left;
         a.y1 = p.top;
@@ -145,7 +138,7 @@ net.net_constructor = function (obj)
         a.top = a.y1 + a.height / 2;
         canvas.renderAll();
       }
-      else if (p.point_type === 'arrow_to')
+      else if (p.end === 'to')
       {
         a.x2 = p.left;
         a.y2 = p.top;
