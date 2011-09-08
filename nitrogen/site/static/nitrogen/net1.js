@@ -123,31 +123,43 @@ net.net_constructor = function (obj)
     var r2 = new fabric.ArrowPoint({ left: ele.get('x2'), top: ele.get('y2'), opacity: 0, width: 10, height: 10, arrow: ele, end: 'to' });
     ele.to.arcs.push(r2); // TODO place|tranasition should be group instead of this
     // if points were moved, modify arrow
+    canvas.observe('group:moving', function (e) {console.log("group:moving"); } )
     canvas.observe('object:moving', function(e)
     {
-      var p = e.memo.target,
-          a = p.arrow;
+      var t = e.memo.target,
+          moveObj = function (obj)
+          {
+            if (obj.type === 'arrow_point')
+            {
+              var a = obj.arrow;
+              if (obj.end === 'from')
+              {
+                a.x1 = this.left + obj.left;
+                a.y1 = this.top + obj.top;
+              }
+              else if (obj.end === 'to')
+              {
+                a.x2 = this.left + obj.left;
+                a.y2 = this.top + obj.top;
+              }
+              a.width = a.x2 - a.x1 || 1;
+              a.height = a.y2 - a.y1 || 1;
+              a.left = a.x1 + a.width / 2;
+              a.top = a.y1 + a.height / 2;
+              canvas.renderAll();
+            }
+          };
+          
       //alert(p.type);
-      if (p.end === 'from')
+      if (t.type === 'group')
       {
-        a.x1 = p.left;
-        a.y1 = p.top;
-        a.width = a.x2 - a.x1 || 1;
-        a.height = a.y2 - a.y1 || 1;
-        a.left = a.x1 + a.width / 2;
-        a.top = a.y1 + a.height / 2;
-        canvas.renderAll();
+        t.forEachObject(moveObj, t);
       }
-      else if (p.end === 'to')
+      else
       {
-        a.x2 = p.left;
-        a.y2 = p.top;
-        a.width = a.x2 - a.x1 || 1;
-        a.height = a.y2 - a.y1 || 1;
-        a.left = a.x1 + a.width / 2;
-        a.top = a.y1 + a.height / 2;
-        canvas.renderAll();
+        moveObj.call({top: 0, left: 0}, t);
       }
+
     });
 
     // TODO rysowanie grotu stycznego do łuku
