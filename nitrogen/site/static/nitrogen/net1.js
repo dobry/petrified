@@ -7,7 +7,6 @@ net.net_constructor = function (obj)
 /*--private-vars--------------------------------------------------------------*/
   var that = {},
     canvas = new fabric.Canvas('canvas'),
-    ctx = document.getElementById('canvas').getContext('2d'), // reference to canvas context
     style = "#000", // all elements color
     stroke = '#333',
     strokeWidth = 3,
@@ -20,16 +19,16 @@ net.net_constructor = function (obj)
       transition: 0,
       arc: 0
     },
-    mousePos = { x: 0, y: 0, fresh: false };
+    mousePos = { x: 0, y: 0 };
 
   // getting mouse position and printing it in feed label
-  var feed = document.getElementById('feed');
-  canvas.onmousemove = function(e)
+  canvas.observe('mouse:up', function(e)
   {
-    e = e || window.event;
-    mousePos = { x: e.pageX - that.offsetX, y: e.pageY - that.offsetY, fresh: true };
+    var feed = document.getElementById('feed');
+    console.log(e.memo.e.clientX);
+    mousePos = { x: e.memo.e.clientX, y: e.memo.e.clientY };
     feed.innerHTML = "(" + mousePos.x + ", " + mousePos.y + ")";
-  };
+  });
 
   function setName (ele, obj)
   {
@@ -122,28 +121,28 @@ net.net_constructor = function (obj)
     canvas.observe('object:moving', function(e)
     {
       var t = e.memo.target,
-          moveObj = function (obj)
+      moveObj = function (obj)
+      {
+        if (obj.type === 'arrow_point')
+        {
+          var a = obj.arrow;
+          if (obj.end === 'from')
           {
-            if (obj.type === 'arrow_point')
-            {
-              var a = obj.arrow;
-              if (obj.end === 'from')
-              {
-                a.x1 = this.left + obj.left;
-                a.y1 = this.top + obj.top;
-              }
-              else if (obj.end === 'to')
-              {
-                a.x2 = this.left + obj.left;
-                a.y2 = this.top + obj.top;
-              }
-              a.width = a.x2 - a.x1 || 1;
-              a.height = a.y2 - a.y1 || 1;
-              a.left = a.x1 + a.width / 2;
-              a.top = a.y1 + a.height / 2;
-              canvas.renderAll();
-            }
-          };
+            a.x1 = this.left + obj.left;
+            a.y1 = this.top + obj.top;
+          }
+          else if (obj.end === 'to')
+          {
+            a.x2 = this.left + obj.left;
+            a.y2 = this.top + obj.top;
+          }
+          a.width = a.x2 - a.x1 || 1;
+          a.height = a.y2 - a.y1 || 1;
+          a.left = a.x1 + a.width / 2;
+          a.top = a.y1 + a.height / 2;
+          canvas.renderAll();
+        }
+      };
           
       //alert(p.type);
       if (t.type === 'group')
@@ -176,7 +175,6 @@ net.net_constructor = function (obj)
   
   that.start = function (obj)
   {
-    //alert("in net.start()");
     that.set(obj.elements);
     that.renderAll;
   };
@@ -220,21 +218,17 @@ net.net_constructor = function (obj)
     mousePos = obj;
   };
   
+  that.getPointer = function ()
+  {
+    return canvas.getPointer();
+  };
+  
   that.drop = function (name)
   {
-    //if (mousePos.fresh)
-    //{
-      //alert(name + " mousePos(" + mousePos.x + ", " + mousePos.y + ")");
-      that.add({ type: name });
-      that.draw();
-      mousePos.fresh = false;
-    /*}
-    else
-    {
-      alert("waiting for position");
-      setTimeout(that.drop(name), 500);
-    }*/
+    that.add({ element: name, x: mousePos.x, y: mousePos.y });
+    //alert(name + " " + pointer.x + " " + pointer.y);
+    console.log(name, mousePos);
   };
   
   return that;
-}; // end function net_constructor
+}; // end of function net_constructor
