@@ -1,8 +1,3 @@
-var is_array = function (value)
-{
-  return Object.prototype.toString.apply(value) === '[object Array]';
-};
-
 var net = {};
 
 net.net_constructor = function (obj)
@@ -206,7 +201,7 @@ net.net_constructor = function (obj)
   that.add = function (proto)
   {
     var ele = that.constructors[proto.type](proto);
-    if (is_array(ele))
+    if (utils.is_array(ele))
     {
       var i;
       for (i = 0; i < ele.length; i++)

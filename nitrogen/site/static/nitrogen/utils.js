@@ -1,3 +1,10 @@
+var utils = {
+  is_array: function (value)
+  {
+    return Object.prototype.toString.apply(value) === '[object Array]';
+  }
+};
+
 //= require "object.class"
 
 (function(global){
@@ -38,6 +45,6 @@
     },
   });
   
-  fabric.ArrowPoint.ATTRIBUTE_NAMES = 'arrow end'.split(' ');
+  fabric.ArrowPoint.ATTRIBUTE_NAMES = 'belongsTo arrow end'.split(' ');
   
 })(typeof exports != 'undefined' ? exports : this);
