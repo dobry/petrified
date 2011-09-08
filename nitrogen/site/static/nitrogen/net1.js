@@ -47,7 +47,14 @@ net.net_constructor = function (obj)
     {
       ele.name = obj.name;
     }
-  }  
+  }
+  
+  canvas.observe('selection:created', function(e)
+  {
+    e.memo.target.hasControls = false;
+  });
+
+  
 /*--public--------------------------------------------------------------------*/
 
   that.offsetX = obj ? obj.offsetX : 30;
