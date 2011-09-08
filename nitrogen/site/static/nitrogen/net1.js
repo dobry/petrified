@@ -68,7 +68,7 @@ net.net_constructor = function (obj)
   {
     var ele = new fabric.Circle({ radius: pR, stroke: stroke, fill: fill, top: obj.y, left: obj.x });
     
-    ele.lockScalingX = ele.lockScalingY = ele.lockRotation = true;
+    ele.hasControls = false;
     ele.element = obj.element; // type of element [place|transition|arc]
     setName(ele, obj);
     ele.arcs = []; // TODO place should be group instead of this
