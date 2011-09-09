@@ -6,7 +6,7 @@ net.net_constructor = function (obj)
 
 /*--private-vars--------------------------------------------------------------*/
   var that = {},
-    canvas = new fabric.Canvas('canvas'),
+    canvas,
     style = "#000", // all elements color
     stroke = '#333',
     strokeWidth = 3,
@@ -21,15 +21,6 @@ net.net_constructor = function (obj)
     },
     mousePos = { x: 0, y: 0 };
 
-  // getting mouse position and printing it in feed label
-  canvas.observe('mouse:up', function(e)
-  {
-    var feed = document.getElementById('feed');
-    console.log(e.memo.e.clientX);
-    mousePos = { x: e.memo.e.clientX, y: e.memo.e.clientY };
-    feed.innerHTML = "(" + mousePos.x + ", " + mousePos.y + ")";
-  });
-
   function setName (ele, obj)
   {
     if (!obj.name)
@@ -43,12 +34,23 @@ net.net_constructor = function (obj)
     }
   }
   
-  canvas.observe('selection:created', function(e)
+  function init ()
   {
-    e.memo.target.hasControls = false;
-  });
-
-  
+    canvas = new fabric.Canvas('canvas'),
+    canvas.observe('selection:created', function(e)
+    {
+      e.memo.target.hasControls = false;
+    });
+    // getting mouse position and printing it in feed label
+    canvas.observe('mouse:up', function(e)
+    {
+      var feed = document.getElementById('feed');
+      mousePos = { x: e.memo.e.clientX, y: e.memo.e.clientY };
+      feed.innerHTML = "(" + mousePos.x + ", " + mousePos.y + ")";
+    });
+  };
+ 
+  init();
 /*--public--------------------------------------------------------------------*/
 
   that.offsetX = obj ? obj.offsetX : 30;
@@ -239,8 +241,9 @@ net.net_constructor = function (obj)
   
   that.clean = function ()
   {
-    alert("  that.clean = function ()");
-    // remove all elements from net
+    // delete net, create new
+    canvas.dispose();
+    init();
   };
   
   return that;
