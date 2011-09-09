@@ -52,15 +52,12 @@ net.net_constructor = function (obj)
   function init ()
   {
     canvas = new fabric.Canvas('canvas'),
-    
     canvas.observe('object:selected', function (e)
     {
-      //console.log(e.memo.target.name);
       selectedObject = e.memo.target;
       var ele = document.getElementById("element_properties");
       if (ele)
       {
-        //console.log(selectedObject);
         ele.innerHTML = properties[selectedObject.element](selectedObject);
       }
     });
@@ -71,7 +68,7 @@ net.net_constructor = function (obj)
     });
     
     // getting mouse position and printing it in feed label
-    canvas.observe('mouse:up', function(e)
+    canvas.observe('mouse:move', function(e)
     {
       var feed = document.getElementById('feed');
       mousePos = { x: e.memo.e.clientX, y: e.memo.e.clientY };
