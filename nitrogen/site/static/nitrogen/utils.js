@@ -7,6 +7,8 @@ var utils = {
 
 //= require "object.class"
 
+
+// define ArrowPoint - point to manipulete arrow
 (function(global){
   
   "use strict";
@@ -37,7 +39,6 @@ var utils = {
     },
 
     _render: function(ctx) {
-      ctx.beginPath();
     },
     
     complexity: function() {
@@ -46,5 +47,48 @@ var utils = {
   });
   
   fabric.ArrowPoint.ATTRIBUTE_NAMES = 'belongsTo arrow end'.split(' ');
+  
+
+  if (fabric.ArrowFace) {
+    return;
+  }
+
+  fabric.ArrowFace = fabric.util.createClass(fabric.Object, {
+    
+    type: 'arrow_face',
+    hasControls: false,
+    
+    initialize: function(options) {
+    },
+
+    _render: function(ctx) {
+    },
+    
+    complexity: function() {
+      return 1;
+    },
+  });
+  
+  fabric.ArrowFace.ATTRIBUTE_NAMES = 'belongsTo arrow end'.split(' ');
+  
+
+  if (fabric.Arc) {
+    return;
+  }
+
+  fabric.Arc = fabric.util.createClass(fabric.Object, {
+    
+    initialize: function(options) {
+    },
+
+    _render: function(ctx) {
+    },
+    
+    complexity: function() {
+      return 1;
+    },
+  });
+  
+  fabric.Arc.ATTRIBUTE_NAMES = ''.split(' ');
   
 })(typeof exports != 'undefined' ? exports : this);
