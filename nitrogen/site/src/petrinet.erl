@@ -45,7 +45,10 @@ event(menu_select) ->
   Menu_name = wf:q(menu_drop),
   Menu = menu(list_to_atom(Menu_name)),
   wf:update(menu_items, Menu),
-  ok.
+  ok;
+event(save_to_file) ->
+  io:format("got save_to_file postback"),
+  ok.  
 
 drop_event(Drag_tag, canvas_drop) ->
   %Message = wf:f("Dropped ~p on canvas.", [Drag_tag]),
@@ -93,11 +96,26 @@ fading_flash(Msg) ->
 
 %% menu context generators
 menu(files) ->
-  [
-    "Wczytaj plik",
+  Menu = [
     #br {},
-    #upload { class = upload_field, tag = myUpload1, show_button = false }
-  ];
+    "Wczytaj z pliku",
+    #br {},
+    #upload { class = upload_field, tag = myUpload1, show_button = false },
+    #br {},
+    #button { text = "Zapisz do pliku", id = save_to_file },
+    #hidden { id = save_to_file_data },
+    #br {},#br {},
+    #button { text = "Wyczyść", id = new_net }
+  ],
+  ToJSON = wf:f("petri.toJSON();"),
+  wf:wire(save_to_file, #event { type = click, actions =
+  [
+    #script { script = ToJSON },
+    #event { postback = save_to_file }
+  ]}),
+  NewNet = wf:f("petri.clean();"),
+  wf:wire(new_net, #event { type = click, actions = #script { script = NewNet } }),
+  Menu;
 menu(elements) ->
   [
     "Dodawaj elementy przeciągając je do edytora.",

@@ -230,5 +230,18 @@ net.net_constructor = function (obj)
     console.log(name, mousePos);
   };
   
+  that.toJSON = function ()
+  {
+    alert("  that.toJSON = function()");
+    // converse net data to JON
+    // save it in hidden field
+  };
+  
+  that.clean = function ()
+  {
+    alert("  that.clean = function ()");
+    // remove all elements from net
+  };
+  
   return that;
 }; // end of function net_constructor
