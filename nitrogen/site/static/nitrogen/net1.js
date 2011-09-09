@@ -71,16 +71,16 @@ net.net_constructor = function (obj)
     canvas.observe('mouse:move', function(e)
     {
       var feed = document.getElementById('feed');
-      mousePos = { x: e.memo.e.clientX, y: e.memo.e.clientY };
+      mousePos = { x: e.memo.e.clientX - that.offsetX, y: e.memo.e.clientY - that.offsetY };
       feed.innerHTML = "(" + mousePos.x + ", " + mousePos.y + ")";
     });
   };
  
-  init();
 /*--public--------------------------------------------------------------------*/
 
   that.offsetX = obj ? obj.offsetX : 30;
   that.offsetY = obj ? obj.offsetY : 30;
+  init();
 
   // net elements constructors
   that.constructors = {};
