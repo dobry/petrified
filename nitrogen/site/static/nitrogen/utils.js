@@ -21,7 +21,6 @@ var utils = {
   {
     $("#selectable li").click(function() {
       $(this).addClass("selected").siblings().removeClass("selected");
-      $( "#select-result" ).empty().append($(this).context.title);
       petri.menu.setSelected($(this).context.title);
     });
   }

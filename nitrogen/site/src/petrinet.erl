@@ -12,14 +12,9 @@ body() ->
   [
     #panel { id = "app", body = 
     [
-      #panel { id = "floating_messages", body =
-      [
-        #hidden { id = "receiver" },
-        #flash {}
-      ] },
       #panel { id = "menus", body = 
       [
-        #panel { id = controls, body = "<p id=\"feedback\"><label id=\"select-result\"></label> <label id=\"feed\">(0, 0)</label></p>" },
+        #panel { id = controls, body = "<p id=\"feedback\"><label id=\"feed\">(0, 0)</label></p>" },
         #dropdown { id = menu_drop, postback = menu_select, options = 
         [
           #option { text = "Sieć", value = "net" },
@@ -29,12 +24,7 @@ body() ->
         #panel { id = menu_items, body = menu(net) }
       ]},
       
-      #panel { id = "editor", body = #droppable
-      {
-        tag = canvas_drop,
-        accept_groups = menu_elements,
-        body = "<canvas id=\"canvas\"></canvas>" }
-      }
+      #panel { id = "editor", body = "<canvas id=\"canvas\"></canvas>" }
     ]}
   ].
 
@@ -59,8 +49,6 @@ event(save_to_file) ->
   ok.  
 
 drop_event(Drag_tag, canvas_drop) ->
-  %Message = wf:f("Dropped ~p on canvas.", [Drag_tag]),
-  %wf:flash(Message),
   % execute js script with data
   Script = wf:f("petri.drop(\"~p\");", [Drag_tag]),
   wf:wire(#script { script = Script }),
@@ -68,15 +56,15 @@ drop_event(Drag_tag, canvas_drop) ->
   ok.
 
 start_upload_event(myUpload1) ->
-  fading_flash("Upload started.").
+  io:format("Upload started.").
 
 finish_upload_event(_Tag, undefined, _, _) ->
-  fading_flash("Please select a file."),
+  io:format("Please select a file."),
   ok;
 
 finish_upload_event(_Tag, _FileName, LocalFileData, Node) ->
   FileSize = filelib:file_size(LocalFileData),
-  fading_flash(wf:f("Uploaded file: ~s (~p bytes) on node ~s.~nParsing...", [LocalFileData, FileSize, Node])),
+  io:format(wf:f("Uploaded file: ~s (~p bytes) on node ~s.~nParsing...", [LocalFileData, FileSize, Node])),
   io:format("Uploaded file: ~s (~p bytes) on node ~s.~nParsing...", [LocalFileData, FileSize, Node]),
   
   % prepare net data
@@ -90,17 +78,6 @@ finish_upload_event(_Tag, _FileName, LocalFileData, Node) ->
   Script = wf:f("petri.start(~s);", [JSONed]),
   wf:wire(#script { script = Script }),
   io:format("lauched js script~n"),
-  ok.
-
-
-%%% module helpers
-
-fading_flash(_Msg) ->
-  %Id = wf:temp_id(),
-  %Ele = #label { id = Id, text = Msg },
-  %wf:wire(Id, #event{type='timer', delay=1000, actions=#hide{effect=blind, target=Id}}),
-  %wf:wire(Ele, #effect { effect = slide, speed = 1000, options=[{direction,"up"}, {mode, hide}]}),
-  %wf:flash(Ele).
   ok.
 
 %% menu context generators
