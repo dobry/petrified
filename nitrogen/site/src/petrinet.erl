@@ -103,7 +103,7 @@ menu(net) ->
   Menu;
 menu(elements) ->
   Menu = [
-    "<label class=\"menu_description\">Dodawaj elementy przeciągając je do edytora.</label>",
+    "<label class=\"menu_description\">Aby dodać element zaznacz, a następnie kliknij w polu edytora.</label>",
     "<ol id=\"selectable\">
 	    <li title=\"button-transition\"><div class=\"button-transition\"></div></li>
 	    <li title=\"button-place\"><div class=\"button-place\"></div></li>
