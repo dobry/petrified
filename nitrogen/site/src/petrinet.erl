@@ -47,7 +47,9 @@ event(menu_select) ->
   wf:update(menu_items, Menu),
   ok;
 event(save_to_file) ->
-  io:format("got save_to_file postback"),
+  io:format("got save_to_file postback:~n"),
+  Data = wf:q(save_to_file_data),
+  io:format("~p~n", [Data]),
   ok.  
 
 drop_event(Drag_tag, canvas_drop) ->

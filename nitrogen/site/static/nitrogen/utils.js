@@ -2,6 +2,19 @@ var utils = {
   is_array: function (value)
   {
     return Object.prototype.toString.apply(value) === '[object Array]';
+  },
+  
+  getElementsByClass: function (cl)
+  {
+    var retnode = [];
+    var myclass = new RegExp('\\b'+cl+'\\b');
+    var elem = document.getElementsByTagName('*');
+    for (var i = 0; i < elem.length; i++)
+    {
+      var classes = elem[i].className;
+      if (myclass.test(classes)) retnode.push(elem[i]);
+    }
+    return retnode;
   }
 };
 

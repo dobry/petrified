@@ -259,6 +259,7 @@ net.net_constructor = function (obj)
   that.toJSON = function ()
   {
     alert("  that.toJSON = function()");
+    utils.getElementsByClass("wfid_save_to_file_data")[0].value = "info zwrotne";
     // converse net data to JON
     // save it in hidden field
   };
