@@ -73,12 +73,12 @@ finish_upload_event(_Tag, _FileName, LocalFileData, Node) ->
   
   % prepare net data
   {ok, Parsed} = petrijson:parse(scanner:tokenize(LocalFileData)),
-  %io:format("parsed~p", [Parsed]),
+  io:format("parsed~p~n", [Parsed]),
   JSONed = mochijson2:encode(Parsed),
   io:format("got net data~n"),
 
   % execute js script with data
-  %io:format("~s~n", [JSONed]),
+  io:format("~s~n", [JSONed]),
   Script = wf:f("petri.start(~s);", [JSONed]),
   wf:wire(#script { script = Script }),
   io:format("lauched js script~n"),
@@ -87,12 +87,13 @@ finish_upload_event(_Tag, _FileName, LocalFileData, Node) ->
 
 %%% module helpers
 
-fading_flash(Msg) ->
-  Id = wf:temp_id(),
-  Ele = #label { id = Id, text = Msg },
+fading_flash(_Msg) ->
+  %Id = wf:temp_id(),
+  %Ele = #label { id = Id, text = Msg },
   %wf:wire(Id, #event{type='timer', delay=1000, actions=#hide{effect=blind, target=Id}}),
   %wf:wire(Ele, #effect { effect = slide, speed = 1000, options=[{direction,"up"}, {mode, hide}]}),
-  wf:flash(Ele).
+  %wf:flash(Ele).
+  ok.
 
 %% menu context generators
 menu(files) ->
@@ -144,5 +145,6 @@ menu(elements) ->
   ];
 menu(properties) ->
   [
-    "Właściwości zaznaczonego elementu."
+    "Właściwości zaznaczonego elementu.",
+    "<div id=\"element_properties\"> </div>"
   ].

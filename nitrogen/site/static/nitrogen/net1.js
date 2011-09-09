@@ -19,7 +19,22 @@ net.net_constructor = function (obj)
       transition: 0,
       arc: 0
     },
-    mousePos = { x: 0, y: 0 };
+    selectedObject = null,
+    mousePos = { x: 0, y: 0 },
+    properties = {
+      place: function ()
+      {
+        return "place";
+      },
+      transition: function ()
+      {
+        return "transition";
+      },
+      arc: function ()
+      {
+        return "arc";
+      }
+    };
 
   function setName (ele, obj)
   {
@@ -37,10 +52,24 @@ net.net_constructor = function (obj)
   function init ()
   {
     canvas = new fabric.Canvas('canvas'),
-    canvas.observe('selection:created', function(e)
+    
+    canvas.observe('object:selected', function (e)
+    {
+      //console.log(e.memo.target.name);
+      selectedObject = e.memo.target;
+      var ele = document.getElementById("element_properties");
+      if (ele)
+      {
+        //console.log(selectedObject);
+        ele.innerHTML = properties[selectedObject.element](selectedObject);
+      }
+    });
+    
+    canvas.observe('selection:created', function (e)
     {
       e.memo.target.hasControls = false;
     });
+    
     // getting mouse position and printing it in feed label
     canvas.observe('mouse:up', function(e)
     {
@@ -63,7 +92,6 @@ net.net_constructor = function (obj)
   that.constructors['place'] = function (obj)
   {
     var ele = new fabric.Circle({ radius: pR, stroke: stroke, fill: fill, top: obj.y, left: obj.x });
-    
     ele.hasControls = false;
     ele.element = obj.element; // type of element [place|transition|arc]
     setName(ele, obj);
@@ -146,7 +174,6 @@ net.net_constructor = function (obj)
         }
       };
           
-      //alert(p.type);
       if (t.type === 'group')
       {
         t.forEachObject(moveObj, t);
@@ -200,7 +227,7 @@ net.net_constructor = function (obj)
   
   that.add = function (proto)
   {
-    var ele = that.constructors[proto.type](proto);
+    var ele = that.constructors[proto.element](proto);
     if (utils.is_array(ele))
     {
       var i;
