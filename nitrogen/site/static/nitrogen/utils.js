@@ -15,6 +15,15 @@ var utils = {
       if (myclass.test(classes)) retnode.push(elem[i]);
     }
     return retnode;
+  },
+  
+  selectable: function ()
+  {
+    $("#selectable li").click(function() {
+      $(this).addClass("selected").siblings().removeClass("selected");
+      $( "#select-result" ).empty().append($(this).context.title);
+      petri.menu.setSelected($(this).context.title);
+    });
   }
 };
 

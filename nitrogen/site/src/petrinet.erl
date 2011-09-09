@@ -19,14 +19,14 @@ body() ->
       ] },
       #panel { id = "menus", body = 
       [
-        #panel { id = controls, body = "<label id=\"feed\">(0, 0)</label>" },
+        #panel { id = controls, body = "<p id=\"feedback\"><label id=\"select-result\"></label> <label id=\"feed\">(0, 0)</label></p>" },
         #dropdown { id = menu_drop, postback = menu_select, options = 
         [
-          #option { text = "Pliki", value = "files" },
+          #option { text = "Sieć", value = "net" },
           #option { text = "Elementy", value = "elements" },
           #option { text = "Właściwości", value = "properties" }
         ]},
-        #panel { id = menu_items, body = menu(files) }
+        #panel { id = menu_items, body = menu(net) }
       ]},
       
       #panel { id = "editor", body = #droppable
@@ -42,9 +42,15 @@ body() ->
 %%% various event handlers
 
 event(menu_select) ->
+  wf:wire(#script { script = "petri.menu.setSelected(\"button-cursor\");" }),
   Menu_name = wf:q(menu_drop),
-  Menu = menu(list_to_atom(Menu_name)),
-  wf:update(menu_items, Menu),
+  case menu(list_to_atom(Menu_name)) of
+    {Menu, Script} ->
+      wf:update(menu_items, Menu),
+      wf:wire(#script { script = Script });
+    Menu ->
+      wf:update(menu_items, Menu)
+  end,
   ok;
 event(save_to_file) ->
   io:format("got save_to_file postback:~n"),
@@ -71,7 +77,7 @@ finish_upload_event(_Tag, undefined, _, _) ->
 finish_upload_event(_Tag, _FileName, LocalFileData, Node) ->
   FileSize = filelib:file_size(LocalFileData),
   fading_flash(wf:f("Uploaded file: ~s (~p bytes) on node ~s.~nParsing...", [LocalFileData, FileSize, Node])),
-  io:format("uploaded~n"),
+  io:format("Uploaded file: ~s (~p bytes) on node ~s.~nParsing...", [LocalFileData, FileSize, Node]),
   
   % prepare net data
   {ok, Parsed} = petrijson:parse(scanner:tokenize(LocalFileData)),
@@ -98,9 +104,8 @@ fading_flash(_Msg) ->
   ok.
 
 %% menu context generators
-menu(files) ->
+menu(net) ->
   Menu = [
-    #br {},
     "Wczytaj z pliku",
     #br {},
     #upload { class = upload_field, tag = myUpload1, show_button = false },
@@ -120,33 +125,19 @@ menu(files) ->
   wf:wire(new_net, #event { type = click, actions = #script { script = NewNet } }),
   Menu;
 menu(elements) ->
-  [
-    "Dodawaj elementy przeciągając je do edytora.",
-    #draggable
-    {
-      class = menu_item,
-      tag = transition,
-      group = menu_elements,
-      clone = true,
-      revert = false,
-      body = "<div class=\"element transition\"></div>"
-      %body = #image { image = "/images/transition.png" }
-    },
-    #draggable
-    {
-      class = menu_item,
-      tag = place,
-      group = menu_elements,
-      clone = true,
-      revert = false, % element comes back to initial place 
-      %body = "<div class=\"element transition\"></div>"
-      body = "<div class=\"element place\"></div>"
-      %body = #image { image = "/images/transition.png" }
-      %body = #image { image = "/images/place.png" } 
-    }
-  ];
+  Menu = [
+    "<label class=\"menu_description\">Dodawaj elementy przeciągając je do edytora.</label>",
+    "<ol id=\"selectable\">
+	    <li title=\"button-transition\"><div class=\"button-transition\"></div></li>
+	    <li title=\"button-place\"><div class=\"button-place\"></div></li>
+	    <li title=\"button-arc\"><div class=\"button-arc\"></div></li>
+	    <li title=\"button-cursor\"><div class=\"button-cursor\"></div></li>
+    </ol>"
+  ],
+  {Menu, "utils.selectable();"};
 menu(properties) ->
-  [
-    "Właściwości zaznaczonego elementu.",
+  Menu = [
+    "<label class=\"menu_description\">Właściwości zaznaczonego elementu.</label>",
     "<div id=\"element_properties\"> </div>"
-  ].
+  ],
+  Menu.

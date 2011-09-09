@@ -19,7 +19,6 @@ net.net_constructor = function (obj)
       transition: 0,
       arc: 0
     },
-    selectedObject = null,
     mousePos = { x: 0, y: 0 },
     properties = {
       place: function ()
@@ -269,6 +268,14 @@ net.net_constructor = function (obj)
     // delete net, create new
     canvas.dispose();
     init();
+  };
+  
+  that.menu = {};
+  that.menu.selectedObject = "button-cursor";
+  that.menu.setSelected = function (obj)
+  {
+    selectedObject = obj;
+    //console.log("set selected", obj);
   };
   
   return that;
