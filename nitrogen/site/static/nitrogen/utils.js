@@ -76,7 +76,7 @@ var utils = {
       {
         this.belongsTo = null;
       }
-      console.log(this);
+      //console.log(this);
       this.width = this.height = 10;
       this.set('arrow', options.arrow || null);
     },
@@ -159,10 +159,18 @@ var utils = {
       return this;
     },
     
+    get: function (prop)
+    {
+      if (prop === 'element') return this.arrow.element;
+      else return this[prop];
+      
+    },
+    
     setStroke: function (Stroke)
     {
-      this.arrow && this.arrow.setStroke(Stroke); // try to set ony if arrow is defined
-      console.log(Stroke);
+      //this.arrow && 
+      this.arrow.setStroke(Stroke); // try to set ony if arrow is defined
+      //console.log(Stroke);
     }
   });
   

@@ -93,7 +93,7 @@ menu(net) ->
     #button { text = "Zapisz do pliku", id = save_to_file },
     #hidden { id = save_to_file_data },
     #br {},#br {},
-    "<input text = \"Wyczyść\" type=\"button\" onclick=\"petri.clean();\" />"%#button { text = "Wyczyść", id = new_net }
+    "<input value=\"Wyczyść\" type=\"button\" onclick=\"petri.clean();\" />"%#button { text = "Wyczyść", id = new_net }
   ],
   ToJSON = wf:f("petri.toJSON();"),
   wf:wire(save_to_file, #event { type = click, actions =

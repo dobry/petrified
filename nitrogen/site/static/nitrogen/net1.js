@@ -77,25 +77,22 @@ net.net_constructor = function (obj)
     
     canvas.observe('object:over', function(e) {
       e.memo.target.setStroke('rgb(227, 195, 46)');
-      //canvas.objectOver = e.memo.target;
-      //canvas.objectOver.setStroke('rgb(227, 195, 46)');
       canvas.renderAll();
     });
 
     canvas.observe('object:out', function(e) {
       e.memo.target.setStroke('black');
-      //canvas.objectOver = null;
-      //canvas.objectOver.setStroke('black');
       canvas.renderAll();
     });
   
+    // TODO show element properties when object and menu properties is selected
     canvas.observe('object:selected', function (e)
     {
       selectedObject = e.memo.target;
       var ele = document.getElementById("element_properties");
       if (ele)
       {
-        ele.innerHTML = properties[selectedObject.element](selectedObject);
+        ele.innerHTML = properties[selectedObject.get('element')](selectedObject);
       }
     });
     
@@ -122,8 +119,6 @@ net.net_constructor = function (obj)
       if (menu === 'elements' && button !== 'button-cursor')
       {
         element = (button.split('-'))[1];
-        //console.log(element, button);
-        //console.log({ left: mousePos.x, top: mousePos.y, element: element });
         that.add({ x: mousePos.x, y: mousePos.y, element: element });
       }
     });
@@ -181,7 +176,6 @@ net.net_constructor = function (obj)
     if (obj.from)
     {
       var owner = that.findByName(obj.from);
-      //console.log(owner);
       p1 = new fabric.ArrowPoint({ belongsTo: owner, end: 'from' })
     }
     else
@@ -191,7 +185,6 @@ net.net_constructor = function (obj)
     if (obj.to)
     {
       var owner = that.findByName(obj.to);
-      //console.log(owner);
       p2 = new fabric.ArrowPoint({ belongsTo: owner, end: 'to' });
     }
     else
@@ -271,7 +264,6 @@ net.net_constructor = function (obj)
   that.drop = function (name)
   {
     that.add({ element: name, x: mousePos.x, y: mousePos.y });
-    //alert(name + " " + pointer.x + " " + pointer.y);
     console.log(name, mousePos);
   };
   
@@ -308,14 +300,11 @@ net.net_constructor = function (obj)
       // turn off selection
       canvas.selection = true;//false;    
     }
-    //console.log("set selected", obj);
   };
   
   that.menu.change = function (Name)
   {
-    //console.log("change", Name);
     that.menu.selectedMenu = Name;
-    //console.log("menu: " + Name);
   }
   
   return that;
