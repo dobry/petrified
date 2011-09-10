@@ -53,7 +53,7 @@ var utils = {
     opacity: 1,
     
     initialize: function (options) {
-      console.log("arrowpoint!",options);
+      //console.log("arrowpoint!",options);
       this.set('end', options.end);
       if (options.end === 'to')
       {
@@ -70,7 +70,7 @@ var utils = {
       if (options.belongsTo)
       {
         this.belongsTo = options.belongsTo;
-        console.log(this.belongsTo.name);
+        //console.log(this.belongsTo.name);
         this.belongsTo.add(this);
         this.left = this.belongsTo.left;
         this.top = this.belongsTo.top;
@@ -84,13 +84,28 @@ var utils = {
       this.set('arrow', options.arrow || null);
     },
 
-    _renderTo: function (ctx) { },
+    _renderTo: function (ctx)
+    {
+      //console.log("renderTo pos",this.get('left'), this.get('top'));
+    },
     _renderFrom: function (ctx)
     {
       // why did i do that?
-      this.arrow._render(ctx);
+      //console.log("renderFrom pos",this.get('left'), this.get('top'));
+      //this.arrow._render(ctx);
     },
-    
+
+/* BUG
+  Strange behavior of arrow, when one of its points is selected in group select.
+  The reason for that are coordinates of selected elements, which are set
+  relative to group coordinates. Arrow takes then coords from its points and
+  don't know that they are now in group scope.
+  
+  Posible solutions:
+  -  disable group select
+  -  add arrow to group created by selection
+  -  set flag in point, when it's added to group and return point position acording to this flag
+*/    
     _setTo: function(property, value) {
       var shouldConstrainValue = (property === 'scaleX' || property === 'scaleY') && value < this.MIN_SCALE_LIMIT;
       if (shouldConstrainValue) {
@@ -108,11 +123,13 @@ var utils = {
         else if (property === 'top')
         {
           this.top = value;
+          //if (this.arrow) console.log("setTo arr.height", value - this.arrow.from.left || 1, "top", this.top);
           if (this.arrow) this.arrow.height = value - this.arrow.from.top || 1;
         }
         else if (property === 'left')
         {
           this.left = value;
+          //if (this.arrow) console.log("setTo arr.width", value - this.arrow.from.left || 1, "left", this.left);
           if (this.arrow) this.arrow.width = value - this.arrow.from.left || 1;
         }
         else {
@@ -144,10 +161,12 @@ var utils = {
           {
             this.arrow.top = value;
             this.arrow.height = this.arrow.to.top - value;
+            //console.log("setFrom top", this.top, "arr.top", value, "arr.height", this.arrow.height);
           }
         }
         else if (property === 'left')
         {
+          //console.log("setFrom left", this.left);
           this[property] = value;
           if (this.arrow)
           {
@@ -216,7 +235,7 @@ var utils = {
     
     _render: function (ctx)
     {
-      //console.log(this);
+      //console.log("render arrow");
       ctx.strokeStyle = this.stroke;
       ctx.lineWidth = 2;
       ctx.beginPath();
@@ -288,12 +307,12 @@ var utils = {
         angle;
       if (m < 1)
       {
-        console.log("nada markerro");
+        //console.log("nada markerro");
         return;
       }
       else if (m === 1)
       {
-        console.log("eine markeren");
+        //console.log("eine markeren");
         this._renderMarker(ctx);
       }
       else if (this.markers <= 6)

@@ -158,7 +158,7 @@ net.net_constructor = function (obj)
   that.constructors['transition'] = function (obj)
   {
     //console.log("construct trans");
-    console.log(obj);
+    //console.log(obj);
     var ele = new fabric.Transition({
       strokeWidth: strokeWidth,
       left: obj.x,
@@ -196,12 +196,12 @@ net.net_constructor = function (obj)
     {
       p1 = new fabric.ArrowPoint({ left: obj.x - 20, top: obj.y - 20, end: 'from' });
     }
-    console.log("uuuuuu", obj.to);
+    //console.log("uuuuuu", obj.to);
     if (obj.to)
     {
       var owner = that.findByName(obj.to);
       p2 = new fabric.ArrowPoint({ belongsTo: owner, end: 'to' });
-      console.log("bbbb!",obj.to, p1, owner);
+      //console.log("bbbb!",obj.to, p1, owner);
     }
     else
     {
@@ -239,10 +239,10 @@ net.net_constructor = function (obj)
     //console.log("find by name", name);
     for (i = 0; i < array.length; i++)
     {
-    console.log("find", array[1]);        
+    //console.log("find", array[1]);        
       if (array[i].name === name)
       {
-    console.log("find if inside", array[1]);        
+    //console.log("find if inside", array[1]);        
         return array[i];
       }
     }
