@@ -81,6 +81,8 @@ net.net_constructor = function (obj)
   that.offsetY = obj ? obj.offsetY : 30;
   init();
 
+  that.canvas = canvas;
+  
   // net elements constructors
   that.constructors = {};
 

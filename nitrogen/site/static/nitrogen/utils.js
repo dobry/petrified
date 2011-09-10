@@ -48,68 +48,156 @@ var utils = {
   fabric.ArrowPoint = fabric.util.createClass(fabric.Object, {
     
     type: 'arrow_point',
-    lockScalingX: true,
-    lockScalingY: true,
-    lockRotation: true,
     hasControls: false,
+    opacity: 1,
     
-    initialize: function(options) {
+    initialize: function (options) {
+      if (options.end === 'to')
+      {
+        this.set = this._setTo;
+        this._render = this._renderTo;
+      }
+      else if (options.end === 'from')
+      {
+        this.set = this._setFrom;
+        this._render = this._renderFrom;
+      }
+
+      this.width = this.height = 10;
       this.set('arrow', options.arrow || null);
       this.set('end', options.end || null);
-      this.callSuper('initialize', options);
+      this.callSuper('initialize', options);   
     },
 
-    _render: function(ctx) {
+    _renderTo: function (ctx) { },
+    _renderFrom: function (ctx)
+    {
+      this.arrow._render(ctx);
     },
     
-    complexity: function() {
-      return 1;
+    _setTo: function(property, value) {
+      var shouldConstrainValue = (property === 'scaleX' || property === 'scaleY') && value < this.MIN_SCALE_LIMIT;
+      if (shouldConstrainValue) {
+        value = this.MIN_SCALE_LIMIT;
+      }
+      if (typeof property == 'object') {
+        for (var prop in property) {
+          this.set(prop, property[prop]);
+        }
+      }
+      else {
+        if (property === 'angle') {
+          this.setAngle(value);
+        }
+        else if (property === 'top')
+        {
+          this.top = value;
+          if (this.arrow) this.arrow.height = value - this.arrow.from.top || 1;
+        }
+        else if (property === 'left')
+        {
+          this.left = value;
+          if (this.arrow) this.arrow.width = value - this.arrow.from.left || 1;
+        }
+        else {
+          this[property] = value;
+        }
+      }
+      
+      return this;
     },
+    
+    _setFrom: function(property, value) {
+      var shouldConstrainValue = (property === 'scaleX' || property === 'scaleY') && value < this.MIN_SCALE_LIMIT;
+      if (shouldConstrainValue) {
+        value = this.MIN_SCALE_LIMIT;
+      }
+      if (typeof property == 'object') {
+        for (var prop in property) {
+          this.set(prop, property[prop]);
+        }
+      }
+      else {
+        if (property === 'angle') {
+          this.setAngle(value);
+        }
+        else if (property === 'top')
+        {
+          this[property] = value;
+          if (this.arrow)
+          {
+            this.arrow.top = value;
+            this.arrow.height = this.arrow.to.top - value;
+          }
+        }
+        else if (property === 'left')
+        {
+          this[property] = value;
+          if (this.arrow)
+          {
+            this.arrow.left = value;
+            this.arrow.width = this.arrow.to.left - value;
+          }
+        }
+        else {
+          this[property] = value;
+        }
+      }
+      
+      return this;
+    }
   });
   
   fabric.ArrowPoint.ATTRIBUTE_NAMES = 'belongsTo arrow end'.split(' ');
-  
 
-  if (fabric.ArrowFace) {
-    return;
-  }
-
-  fabric.ArrowFace = fabric.util.createClass(fabric.Object, {
+  fabric.Arrow = fabric.util.createClass(fabric.Object, {
     
-    type: 'arrow_face',
+    type: 'arrow',
+    selectable: false,
     hasControls: false,
     
-    initialize: function(options) {
-    },
+    initialize: function (options)
+    {
+      var that = this;
+      this.callSuper('initialize', options);
 
-    _render: function(ctx) {
+      //init arrow grabbable points
+      this.from = options.from;
+      this.from.arrow = this;
+      this.to = options.to;
+      this.to.arrow = this;
+      this.top = that.from.top;
+      this.left = that.from.left;
+      this.width = that.to.left - that.from.left;
+      this.height = that.to.top - that.from.top;
+ 
+      this.element = options.element;
+      this.name = options.name;
     },
     
-    complexity: function() {
-      return 1;
+    _render: function (ctx)
+    {
+      ctx.strokeStyle = 'rgb(0,0,0)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(0,0);
+      ctx.lineTo(this.width, this.height);
+      ctx.stroke();
+      ctx.translate(this.width, this.height);
+      ctx.rotate(this._calcAngle());
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(5, 20);
+      ctx.moveTo(0, 0);
+      ctx.lineTo(-5, 20);
+      ctx.stroke();
     },
+    
+    _calcAngle: function ()
+    {
+      var angle = Math.atan(this.height / this.width);
+      return this.width < 0 ? 3* Math.PI + angle + Math.PI/2 : angle + Math.PI/2;
+    }
   });
-  
-  fabric.ArrowFace.ATTRIBUTE_NAMES = 'belongsTo arrow end'.split(' ');
-  
-
-  if (fabric.Arc) {
-    return;
-  }
-
-  fabric.Arc = fabric.util.createClass(fabric.Object, {
-    
-    initialize: function(options) {
-    },
-
-    _render: function(ctx) {
-    },
-    
-    complexity: function() {
-      return 1;
-    },
-  });
-  
-  fabric.Arc.ATTRIBUTE_NAMES = ''.split(' ');
   
 })(typeof exports != 'undefined' ? exports : this);
