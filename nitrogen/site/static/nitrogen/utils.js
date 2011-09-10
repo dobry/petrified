@@ -36,6 +36,7 @@ var utils = {
   
   var fabric = global.fabric || (global.fabric = { }),
       extend = fabric.util.object.extend,
+      piBy2   = Math.PI * 2,
       min = fabric.util.array.min,
       max = fabric.util.array.max,
       invoke = fabric.util.array.invoke,
@@ -52,6 +53,7 @@ var utils = {
     opacity: 1,
     
     initialize: function (options) {
+      //console.log("arrowpoint!",options);
       this.set('end', options.end);
       if (options.end === 'to')
       {
@@ -68,7 +70,7 @@ var utils = {
       if (options.belongsTo)
       {
         this.belongsTo = options.belongsTo;
-        this.belongsTo.arcs.push(this); // TODO place|tranasition should be group instead of this
+        //this.belongsTo.arcs.push(this); // TODO place|tranasition should be group instead of this
         this.left = this.belongsTo.left;
         this.top = this.belongsTo.top;
       }
@@ -84,6 +86,7 @@ var utils = {
     _renderTo: function (ctx) { },
     _renderFrom: function (ctx)
     {
+      // why did i do that?
       this.arrow._render(ctx);
     },
     
@@ -178,32 +181,36 @@ var utils = {
 
   fabric.Arrow = fabric.util.createClass(fabric.Object, {
     
-    type: 'arrow',
+    type: 'arc',
     selectable: false,
     hasControls: false,
     stroke: 'black',
     
     initialize: function (options)
     {
-      var that = this;
+      //console.log("bonzaa!",options);
       this.callSuper('initialize', options);
-
+      
       //init arrow grabbable points
       this.from = options.from;
       this.from.arrow = this;
       this.to = options.to;
       this.to.arrow = this;
-      this.top = that.from.top;
-      this.left = that.from.left;
-      this.width = that.to.left - that.from.left;
-      this.height = that.to.top - that.from.top;
+      
+      
+      this.top = this.from.top;
+      this.left = this.from.left;
+      this.width = this.to.left - this.from.left;
+      this.height = this.to.top - this.from.top;
  
+      this.strokeWidth = options.strokeWidth;
       this.element = options.element;
       this.name = options.name;
     },
     
     _render: function (ctx)
     {
+      //console.log(this);
       ctx.strokeStyle = this.stroke;
       ctx.lineWidth = 2;
       ctx.beginPath();
@@ -224,6 +231,99 @@ var utils = {
     {
       var angle = Math.atan(this.height / this.width);
       return this.width < 0 ? 3* Math.PI + angle + Math.PI/2 : angle + Math.PI/2;
+    }
+  });
+  
+  
+  fabric.Place = fabric.util.createClass(fabric.Object, {
+    
+    type: 'place',
+    //selectable: false,
+    hasControls: false,
+    //stroke: 'black',
+    
+    initialize: function (options)
+    {
+      //console.log("ahoj'", options);
+      options = options || { };
+      this.callSuper('initialize', options);
+      
+      this.set('radius', options.radius || 0);
+      
+      var radiusBy2ByScale = this.get('radius') * 2 * this.get('scaleX');
+      this.set('width', radiusBy2ByScale).set('height', radiusBy2ByScale);
+      
+      this.mR = options.mR;
+      //this.arcs = new fabric.Group([]);
+      
+      this.markers = options.markers || 0;
+      this.element = options.element;
+      this.name = options.name;
+    },
+    
+    
+    _render: function(ctx, noTransform) {
+      ctx.beginPath();
+      // multiply by currently set alpha (the one that was set by path group where this object is contained, for example)
+      ctx.globalAlpha *= this.opacity;
+      ctx.arc(noTransform ? this.left : 0, noTransform ? this.top : 0, this.radius, 0, piBy2, false);
+      ctx.closePath();
+      if (this.fill) {
+        ctx.fill();
+      }
+      if (this.stroke) {
+        ctx.stroke();
+      }
+      this._renderMarkers(ctx);
+    },
+    
+    _renderMarkers: function(ctx)
+    {
+      var i, pos,
+        m = this.markers,
+        angle;
+      if (m < 1)
+      {
+        console.log("nada markerro");
+        return;
+      }
+      else if (m === 1)
+      {
+        console.log("eine markeren");
+        this._renderMarker(ctx);
+      }
+      else if (this.markers <= 6)
+      {
+        //console.log("viele markerren");
+        //console.log(m);
+        angle = (m ? piBy2 / m : 0);
+        pos = this.radius/2;//(this.radius - 2 * this.mR) / 2;
+        //console.log(angle, pos, m.length);
+        for (i = 0; i < m; i++)
+        {
+            ctx.rotate(angle);
+            ctx.translate(0, pos);
+            this._renderMarker(ctx);
+            ctx.translate(0, -pos);
+        }
+      }
+      else
+      {
+        //console.log("więcej niż 6 markerów");
+        ctx.fillStyle = 'black';
+        ctx.font = '24px "Tahoma"';
+        ctx.fillText(this.markers, 0, 0); 
+      }
+    },
+    
+    _renderMarker: function (ctx)
+    {
+      //console.log(this.stroke);
+      ctx.fillStyle = this.stroke;
+      ctx.beginPath();
+      ctx.arc(0, 0, this.mR, 0, piBy2, false);
+      ctx.closePath();
+      ctx.fill();
     }
   });
   

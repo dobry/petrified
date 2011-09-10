@@ -9,7 +9,7 @@ net.net_constructor = function (obj)
     canvas,
     style = "#000", // all elements color
     stroke = '#333',
-    strokeWidth = 3,
+    strokeWidth = 2,
     fill = '#fff',
     mR = 5, // marker radius
     pR = 30, // place radius and half of transition length
@@ -138,22 +138,27 @@ net.net_constructor = function (obj)
   // place constructor
   that.constructors['place'] = function (obj)
   {
-    var ele = new fabric.Circle({ strokeWidth: 2, radius: pR, stroke: stroke, fill: fill, top: obj.y, left: obj.x });
-    ele.hasControls = false;
-    ele.element = obj.element; // type of element [place|transition|arc]
-    ele.name = genName(obj);
-    ele.arcs = []; // TODO place should be group instead of this
-    ele.markers = ele.markers || 0;
-
-    // TODO markers;    
-
+    //console.log("construct place", obj);
+    var ele = new fabric.Place({ 
+      markers: obj.markers, 
+      strokeWidth: strokeWidth, 
+      radius: pR, 
+      stroke: stroke, 
+      fill: fill, 
+      top: obj.y, 
+      left: obj.x,
+      name: genName(obj),
+      mR: mR,
+      element: obj.element
+    });
     return ele;
   };
 
   // transition constructor
   that.constructors['transition'] = function (obj)
   {
-    var ele = new fabric.Rect({ strokeWidth: 2, left: obj.x, top: obj.y, stroke: stroke, fill: fill, width: 2 * mR, height: 2 * pR });   
+    //console.log("construct trans");
+    var ele = new fabric.Rect({ strokeWidth: that.strokeWidth, left: obj.x, top: obj.y, stroke: stroke, fill: fill, width: 2 * mR, height: 2 * pR });   
 
     ele.lockScalingX = ele.lockScalingY = true;
     ele.element = obj.element;
@@ -169,23 +174,27 @@ net.net_constructor = function (obj)
   // arc constructor
   that.constructors['arc'] = function (obj)
   {
+    //console.log("construct arc", obj);
     var p1, p2, arrow, from, to;
-    
     
     // init grip point with its owner if exist or coords from mouse
     if (obj.from)
     {
       var owner = that.findByName(obj.from);
-      p1 = new fabric.ArrowPoint({ belongsTo: owner, end: 'from' })
+      //console.log("aaaaa!", owner);
+      p1 = new fabric.ArrowPoint({ belongsTo: owner, end: 'from' });
+      //console.log("aaaaa!",p1, owner);
     }
     else
     {
-      p1 = new fabric.ArrowPoint({ left: obj.x - 20, top: obj.y - 20, end: 'from' })
+      p1 = new fabric.ArrowPoint({ left: obj.x - 20, top: obj.y - 20, end: 'from' });
     }
+    //console.log("uuuuuu", obj.to);
     if (obj.to)
     {
       var owner = that.findByName(obj.to);
       p2 = new fabric.ArrowPoint({ belongsTo: owner, end: 'to' });
+      //console.log("bbbb!",p1, owner);
     }
     else
     {
@@ -194,7 +203,7 @@ net.net_constructor = function (obj)
     
     
     // create arrow and its handles
-    arrow = new fabric.Arrow({ from: p1, to: p2, element: obj.element, name: genName(obj) });
+    arrow = new fabric.Arrow({ strokeWidth: that.strokeWidth, from: p1, to: p2, element: obj.element, name: genName(obj) });
     
     return [arrow, p1, p2];
   };
@@ -220,10 +229,12 @@ net.net_constructor = function (obj)
   that.findByName = function (name)
   {
     var i, array = canvas.getObjects();
+    //console.log("find by name", name);
     for (i = 0; i < array.length; i++)
     {
       if (array[i].name === name)
       {
+    //console.log(array[1]);        
         return array[i];
       }
     }
