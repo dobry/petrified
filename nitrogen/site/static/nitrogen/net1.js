@@ -158,16 +158,23 @@ net.net_constructor = function (obj)
   that.constructors['transition'] = function (obj)
   {
     //console.log("construct trans");
-    var ele = new fabric.Rect({ strokeWidth: that.strokeWidth, left: obj.x, top: obj.y, stroke: stroke, fill: fill, width: 2 * mR, height: 2 * pR });   
-
-    ele.lockScalingX = ele.lockScalingY = true;
-    ele.element = obj.element;
-    ele.name = genName(obj);
-    ele.arcs = []; // TODO tranasition should be group instead of this
-    ele.angle = obj.angle || 0;
-    ele.weight = ele.weight || 1;
-    ele.delay = ele.delay || 1;
-    
+    console.log(obj);
+    var ele = new fabric.Transition({
+      strokeWidth: strokeWidth,
+      left: obj.x,
+      top: obj.y, 
+      stroke: stroke, 
+      fill: fill, 
+      width: 2 * mR, 
+      height: 2 * pR,
+      mR: mR,
+      radius: pR, 
+      element: obj.element,
+      name: genName(obj),
+      beta: obj.angle || 0,
+      weight: obj.weight || 1,
+      delay: obj.delay || 1
+    });
     return ele;
   };
 
@@ -189,12 +196,12 @@ net.net_constructor = function (obj)
     {
       p1 = new fabric.ArrowPoint({ left: obj.x - 20, top: obj.y - 20, end: 'from' });
     }
-    //console.log("uuuuuu", obj.to);
+    console.log("uuuuuu", obj.to);
     if (obj.to)
     {
       var owner = that.findByName(obj.to);
       p2 = new fabric.ArrowPoint({ belongsTo: owner, end: 'to' });
-      //console.log("bbbb!",p1, owner);
+      console.log("bbbb!",obj.to, p1, owner);
     }
     else
     {
@@ -232,9 +239,10 @@ net.net_constructor = function (obj)
     //console.log("find by name", name);
     for (i = 0; i < array.length; i++)
     {
+    console.log("find", array[1]);        
       if (array[i].name === name)
       {
-    //console.log(array[1]);        
+    console.log("find if inside", array[1]);        
         return array[i];
       }
     }

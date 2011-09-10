@@ -53,7 +53,7 @@ var utils = {
     opacity: 1,
     
     initialize: function (options) {
-      //console.log("arrowpoint!",options);
+      console.log("arrowpoint!",options);
       this.set('end', options.end);
       if (options.end === 'to')
       {
@@ -70,8 +70,8 @@ var utils = {
       if (options.belongsTo)
       {
         this.belongsTo = options.belongsTo;
-        console.log(this.belongsTo);
-        if (this.belongsTo.element === 'place') this.belongsTo.add(this);
+        console.log(this.belongsTo.name);
+        this.belongsTo.add(this);
         this.left = this.belongsTo.left;
         this.top = this.belongsTo.top;
       }
@@ -244,9 +244,7 @@ var utils = {
   fabric.Place = fabric.util.createClass(fabric.Object, {
     
     type: 'place',
-    //selectable: false,
     hasControls: false,
-    //stroke: 'black',
     ends: [],
     
     initialize: function (options)
@@ -257,14 +255,10 @@ var utils = {
       
       this.set('radius', options.radius || 0);
       
-      var radiusBy2ByScale = this.get('radius') * 2 * this.get('scaleX');
       this.set('width', this.get('radius') * 2);
       this.set('height', this.get('radius') * 2);
       
       this.mR = options.mR;
-      this.oldLeft = this.left;
-      this.oldTop = this.top;
-      this.ends.foreach = Array.prototype.foreach;
       
       this.markers = options.markers || 0;
       this.element = options.element;
@@ -361,9 +355,9 @@ var utils = {
         var i;
         for (i = 0; i < this.ends.length; i++)
         {
-          console.log(val, this.ends[i].top, this.top, val - this.top);
+          //console.log(val, this.ends[i].top, this.top, val - this.top);
           this.ends[i].move(prop, val - this.top);
-          console.log(val, this.ends[i].top, this.top, val - this.top);
+          //console.log(val, this.ends[i].top, this.top, val - this.top);
         }
         this.top = val;
       }
@@ -382,6 +376,96 @@ var utils = {
         this[prop] = val;
       }
     }
-  });
+  }); // -----------end of fabric.Place----------
+  
+
+  fabric.Transition = fabric.util.createClass(fabric.Object, {
+    
+    type: 'transition',
+    lockScalingX: true,
+    lockScalingY: true,
+    ends: [],
+    
+    initialize: function (options)
+    {
+      //console.log("ahoj'", options);
+      options = options || { };
+      this.callSuper('initialize', options);
+      
+      this.beta = options.beta;
+      this.angle = this.beta * Math.PI / 180;
+      this.weight = options.weight;
+      this.delay = options.delay;
+      this.set('radius', options.radius || 0);      
+      this.mR = options.mR;
+
+      
+      this.element = options.element;
+      this.name = options.name;
+    },
+    
+    
+    _render: function(ctx, noTransform) {
+      ctx.beginPath();
+      ctx.globalAlpha *= this.opacity;
+      ctx.strokeStyle = this.stroke;
+      ctx.fillStyle = this.fill;
+      ctx.rect(-this.mR, -this.radius, this.width, this.height);
+      ctx.closePath();
+      if (this.fill) {
+        ctx.fill();
+      }
+      if (this.stroke) {
+        ctx.stroke();
+      }
+    },
+    
+    add: function (ele)
+    {
+      this.ends.push(ele);
+    },
+    
+    remove: function (ele)
+    {
+      var i;
+      for (i = 0; i < this.ends.length; i++)
+      {
+        if (this.ends[i] === ele)
+        {
+          this.ends.splice(i, 1);
+        }
+      }
+    },
+    
+    set: function (prop, val)
+    {
+      var i;
+      if (prop === 'top')
+      {
+        var i;
+        for (i = 0; i < this.ends.length; i++)
+        {
+          //console.log(val, this.ends[i].top, this.top, val - this.top);
+          this.ends[i].move(prop, val - this.top);
+          //console.log(val, this.ends[i].top, this.top, val - this.top);
+        }
+        this.top = val;
+      }
+      else if (prop === 'left')
+      {
+        //console.log(this.ends);
+        var i;
+        for (i = 0; i < this.ends.length; i++)
+        {
+          this.ends[i].move(prop, val - this.left);
+        }
+        this.left = val;
+      }
+      else
+      {
+        this[prop] = val;
+      }
+    }
+  }); //-----------end of fabric.Transition---------
   
 })(typeof exports != 'undefined' ? exports : this);
