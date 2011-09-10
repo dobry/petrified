@@ -53,6 +53,42 @@ net.net_constructor = function (obj)
   function init ()
   {
     canvas = new fabric.Canvas('canvas'),
+
+    // piggyback on `canvas.findTarget`, to fire "object:over" and "object:out" events
+    canvas.findTarget = (function(originalFn) {
+      return function() {
+        var target = originalFn.apply(this, arguments);
+        if (target) {
+          if (this._hoveredTarget !== target) {
+            canvas.fire('object:over', { target: target });
+            if (this._hoveredTarget) {
+              canvas.fire('object:out', { target: this._hoveredTarget });
+            }
+            this._hoveredTarget = target;
+          }
+        }
+        else if (this._hoveredTarget) {
+          canvas.fire('object:out', { target: this._hoveredTarget });
+          this._hoveredTarget = null;
+        }
+        return target;
+      };
+    })(canvas.findTarget);
+    
+    canvas.observe('object:over', function(e) {
+      e.memo.target.setStroke('rgb(227, 195, 46)');
+      //canvas.objectOver = e.memo.target;
+      //canvas.objectOver.setStroke('rgb(227, 195, 46)');
+      canvas.renderAll();
+    });
+
+    canvas.observe('object:out', function(e) {
+      e.memo.target.setStroke('black');
+      //canvas.objectOver = null;
+      //canvas.objectOver.setStroke('black');
+      canvas.renderAll();
+    });
+  
     canvas.observe('object:selected', function (e)
     {
       selectedObject = e.memo.target;
@@ -79,15 +115,15 @@ net.net_constructor = function (obj)
     // adding element when
     canvas.observe('mouse:up', function(e)
     {
-      console.log("mouse:up - menu elements");
+      //console.log("mouse:up - menu elements");
       var element,
         button = that.menu.selectedObject,
         menu = that.menu.selectedMenu;
       if (menu === 'elements' && button !== 'button-cursor')
       {
         element = (button.split('-'))[1];
-        console.log(element, button);
-        console.log({ left: mousePos.x, top: mousePos.y, element: element });
+        //console.log(element, button);
+        //console.log({ left: mousePos.x, top: mousePos.y, element: element });
         that.add({ x: mousePos.x, y: mousePos.y, element: element });
       }
     });
@@ -107,7 +143,7 @@ net.net_constructor = function (obj)
   // place constructor
   that.constructors['place'] = function (obj)
   {
-    var ele = new fabric.Circle({ radius: pR, stroke: stroke, fill: fill, top: obj.y, left: obj.x });
+    var ele = new fabric.Circle({ strokeWidth: 2, radius: pR, stroke: stroke, fill: fill, top: obj.y, left: obj.x });
     ele.hasControls = false;
     ele.element = obj.element; // type of element [place|transition|arc]
     ele.name = genName(obj);
@@ -122,7 +158,7 @@ net.net_constructor = function (obj)
   // transition constructor
   that.constructors['transition'] = function (obj)
   {
-    var ele = new fabric.Rect({ left: obj.x, top: obj.y, stroke: stroke, fill: fill, width: 2 * mR, height: 2 * pR });   
+    var ele = new fabric.Rect({ strokeWidth: 2, left: obj.x, top: obj.y, stroke: stroke, fill: fill, width: 2 * mR, height: 2 * pR });   
 
     ele.lockScalingX = ele.lockScalingY = true;
     ele.element = obj.element;
@@ -262,14 +298,24 @@ net.net_constructor = function (obj)
   that.menu.setSelected = function (obj)
   {
     that.menu.selectedObject = obj;
-    console.log("set selected", obj);
+    if (obj !== "button-cursor")
+    {
+      // turn on object selection
+      canvas.selection = false;//true;
+    }
+    else 
+    {
+      // turn off selection
+      canvas.selection = true;//false;    
+    }
+    //console.log("set selected", obj);
   };
   
   that.menu.change = function (Name)
   {
     //console.log("change", Name);
     that.menu.selectedMenu = Name;
-    console.log("menu: " + Name);
+    //console.log("menu: " + Name);
   }
   
   return that;

@@ -157,6 +157,12 @@ var utils = {
       }
       
       return this;
+    },
+    
+    setStroke: function (Stroke)
+    {
+      this.arrow && this.arrow.setStroke(Stroke); // try to set ony if arrow is defined
+      console.log(Stroke);
     }
   });
   
@@ -167,6 +173,7 @@ var utils = {
     type: 'arrow',
     selectable: false,
     hasControls: false,
+    stroke: 'black',
     
     initialize: function (options)
     {
@@ -189,7 +196,7 @@ var utils = {
     
     _render: function (ctx)
     {
-      ctx.strokeStyle = 'rgb(0,0,0)';
+      ctx.strokeStyle = this.stroke;
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.moveTo(0,0);
