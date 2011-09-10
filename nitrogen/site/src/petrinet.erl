@@ -111,7 +111,7 @@ menu(elements) ->
 	    <li title=\"button-transition\"><div class=\"button-transition\"></div></li>
 	    <li title=\"button-place\"><div class=\"button-place\"></div></li>
 	    <li title=\"button-arc\"><div class=\"button-arc\"></div></li>
-	    <li title=\"button-cursor\"><div class=\"button-cursor\"></div></li>
+	    <li class=\"selected\" title=\"button-cursor\"><div class=\"button-cursor\"></div></li>
     </ol>"
   ],
   {Menu, "utils.selectable();"};

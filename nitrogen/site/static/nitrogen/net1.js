@@ -76,7 +76,21 @@ net.net_constructor = function (obj)
       feed.innerHTML = "(" + mousePos.x + ", " + mousePos.y + ")";
     });
     
-    // 
+    // adding element when
+    canvas.observe('mouse:up', function(e)
+    {
+      console.log("mouse:up - menu elements");
+      var element,
+        button = that.menu.selectedObject,
+        menu = that.menu.selectedMenu;
+      if (menu === 'elements' && button !== 'button-cursor')
+      {
+        element = (button.split('-'))[1];
+        console.log(element, button);
+        console.log({ left: mousePos.x, top: mousePos.y, element: element });
+        that.add({ x: mousePos.x, y: mousePos.y, element: element });
+      }
+    });
   };
  
 /*--public--------------------------------------------------------------------*/
@@ -136,7 +150,7 @@ net.net_constructor = function (obj)
     }
     else
     {
-      p1 = new fabric.ArrowPoint({ left: mousePos.x - 20, top: mousePos.y - 20, end: 'from' })
+      p1 = new fabric.ArrowPoint({ left: obj.x - 20, top: obj.y - 20, end: 'from' })
     }
     if (obj.to)
     {
@@ -235,9 +249,11 @@ net.net_constructor = function (obj)
   
   that.clean = function ()
   {
+    console.log("cleaning");
     // delete net, create new
     canvas.dispose();
     init();
+    console.log("cleaned");
   };
   
   that.menu = {};
@@ -245,14 +261,15 @@ net.net_constructor = function (obj)
   that.menu.selectedMenu = null;
   that.menu.setSelected = function (obj)
   {
-    selectedObject = obj;
-    //console.log("set selected", obj);
+    that.menu.selectedObject = obj;
+    console.log("set selected", obj);
   };
   
   that.menu.change = function (Name)
   {
     //console.log("change", Name);
     that.menu.selectedMenu = Name;
+    console.log("menu: " + Name);
   }
   
   return that;
