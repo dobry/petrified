@@ -35,17 +35,19 @@ net.net_constructor = function (obj)
       }
     };
 
-  function setName (ele, obj)
+  function genName (obj)
   {
+    var name;
     if (!obj.name)
     {
-      ele.name = ele.element + counters[ele.element];
-      counters[ele.element]++;
+      name = obj.element + counters[obj.element];
+      counters[obj.element]++;
     }
     else
     {
-      ele.name = obj.name;
+      name = obj.name;
     }
+    return name;
   }
   
   function init ()
@@ -92,7 +94,7 @@ net.net_constructor = function (obj)
     var ele = new fabric.Circle({ radius: pR, stroke: stroke, fill: fill, top: obj.y, left: obj.x });
     ele.hasControls = false;
     ele.element = obj.element; // type of element [place|transition|arc]
-    setName(ele, obj);
+    ele.name = genName(obj);
     ele.arcs = []; // TODO place should be group instead of this
     ele.markers = ele.markers || 0;
 
@@ -108,7 +110,7 @@ net.net_constructor = function (obj)
 
     ele.lockScalingX = ele.lockScalingY = true;
     ele.element = obj.element;
-    setName(ele, obj);
+    ele.name = genName(obj);
     ele.arcs = []; // TODO tranasition should be group instead of this
     ele.angle = obj.angle || 0;
     ele.weight = ele.weight || 1;
@@ -120,72 +122,36 @@ net.net_constructor = function (obj)
   // arc constructor
   that.constructors['arc'] = function (obj)
   {
-    // create arrow
-    var from, to, points;
+    var p1, p2, arrow, from, to;
+    
+    
+    // init grip point with its owner if exist or coords from mouse
     if (obj.from)
     {
-      from = that.findByName(obj.from);
-      points = [from.left, from.top];
+      var owner = that.findByName(obj.from);
+      //console.log(owner);
+      p1 = new fabric.ArrowPoint({ belongsTo: owner, end: 'from' })
+    }
+    else
+    {
+      p1 = new fabric.ArrowPoint({ left: mousePos.x - 20, top: mousePos.y - 20, end: 'from' })
     }
     if (obj.to)
     {
-      to = that.findByName(obj.to);
-      points.push(to.left);
-      points.push(to.top);
+      var owner = that.findByName(obj.to);
+      //console.log(owner);
+      p2 = new fabric.ArrowPoint({ belongsTo: owner, end: 'to' });
     }
-    var ele = new fabric.Line(points);
-    ele.selectable = false;
-    ele.from = from;
-    ele.to = to;
-    ele.element = obj.element;
-    setName(ele, obj);
-    // create arrow points
-    var r1 = new fabric.ArrowPoint({ left: ele.get('x1'), top: ele.get('y1'), opacity: 0, width: 10, height: 10, arrow: ele, end: 'from' });
-    ele.from.arcs.push(r1); // TODO place|tranasition should be group instead of this
-    var r2 = new fabric.ArrowPoint({ left: ele.get('x2'), top: ele.get('y2'), opacity: 0, width: 10, height: 10, arrow: ele, end: 'to' });
-    ele.to.arcs.push(r2); // TODO place|tranasition should be group instead of this
-    // if points were moved, modify arrow
-    canvas.observe('group:moving', function (e) {console.log("group:moving"); } )
-    canvas.observe('object:moving', function(e)
+    else
     {
-      var t = e.memo.target,
-      moveObj = function (obj)
-      {
-        if (obj.type === 'arrow_point')
-        {
-          var a = obj.arrow;
-          if (obj.end === 'from')
-          {
-            a.x1 = this.left + obj.left;
-            a.y1 = this.top + obj.top;
-          }
-          else if (obj.end === 'to')
-          {
-            a.x2 = this.left + obj.left;
-            a.y2 = this.top + obj.top;
-          }
-          a.width = a.x2 - a.x1 || 1;
-          a.height = a.y2 - a.y1 || 1;
-          a.left = a.x1 + a.width / 2;
-          a.top = a.y1 + a.height / 2;
-          canvas.renderAll();
-        }
-      };
-          
-      if (t.type === 'group')
-      {
-        t.forEachObject(moveObj, t);
-      }
-      else
-      {
-        moveObj.call({top: 0, left: 0}, t);
-      }
-
-    });
-
-    // TODO rysowanie grotu stycznego do łuku
+      p2 = new fabric.ArrowPoint({ left: mousePos.x + 20, top: mousePos.y + 20, end: 'to' });
+    }
     
-    return [ele, r1, r2];
+    
+    // create arrow and its handles
+    arrow = new fabric.Arrow({ from: p1, to: p2, element: obj.element, name: genName(obj) });
+    
+    return [arrow, p1, p2];
   };
   
   // set whole net

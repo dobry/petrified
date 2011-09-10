@@ -52,6 +52,7 @@ var utils = {
     opacity: 1,
     
     initialize: function (options) {
+      this.set('end', options.end);
       if (options.end === 'to')
       {
         this.set = this._setTo;
@@ -62,11 +63,22 @@ var utils = {
         this.set = this._setFrom;
         this._render = this._renderFrom;
       }
-
+      this.callSuper('initialize', options);
+            
+      if (options.belongsTo)
+      {
+        this.belongsTo = options.belongsTo;
+        this.belongsTo.arcs.push(this); // TODO place|tranasition should be group instead of this
+        this.left = this.belongsTo.left;
+        this.top = this.belongsTo.top;
+      }
+      else
+      {
+        this.belongsTo = null;
+      }
+      console.log(this);
       this.width = this.height = 10;
       this.set('arrow', options.arrow || null);
-      this.set('end', options.end || null);
-      this.callSuper('initialize', options);   
     },
 
     _renderTo: function (ctx) { },
