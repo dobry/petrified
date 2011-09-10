@@ -75,6 +75,8 @@ net.net_constructor = function (obj)
       mousePos = { x: e.memo.e.clientX - that.offsetX, y: e.memo.e.clientY - that.offsetY };
       feed.innerHTML = "(" + mousePos.x + ", " + mousePos.y + ")";
     });
+    
+    // 
   };
  
 /*--public--------------------------------------------------------------------*/
@@ -240,11 +242,18 @@ net.net_constructor = function (obj)
   
   that.menu = {};
   that.menu.selectedObject = "button-cursor";
+  that.menu.selectedMenu = null;
   that.menu.setSelected = function (obj)
   {
     selectedObject = obj;
     //console.log("set selected", obj);
   };
+  
+  that.menu.change = function (Name)
+  {
+    //console.log("change", Name);
+    that.menu.selectedMenu = Name;
+  }
   
   return that;
 }; // end of function net_constructor

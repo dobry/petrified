@@ -41,6 +41,9 @@ event(menu_select) ->
     Menu ->
       wf:update(menu_items, Menu)
   end,
+  ChangeMenu = wf:f("petri.menu.change(\"~s\");", [Menu_name]),
+  io:format(ChangeMenu),
+  wf:wire(#script { script = ChangeMenu }),
   ok;
 event(save_to_file) ->
   io:format("got save_to_file postback:~n"),
