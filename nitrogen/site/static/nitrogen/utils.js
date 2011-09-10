@@ -70,7 +70,8 @@ var utils = {
       if (options.belongsTo)
       {
         this.belongsTo = options.belongsTo;
-        //this.belongsTo.arcs.push(this); // TODO place|tranasition should be group instead of this
+        console.log(this.belongsTo);
+        if (this.belongsTo.element === 'place') this.belongsTo.add(this);
         this.left = this.belongsTo.left;
         this.top = this.belongsTo.top;
       }
@@ -174,8 +175,13 @@ var utils = {
       //this.arrow && 
       this.arrow.setStroke(Stroke); // try to set ony if arrow is defined
       //console.log(Stroke);
+    },
+    
+    move: function (dir, val)
+    {
+      this.set(dir, this.get(dir) + val);
     }
-  });
+  }); //---------end of fabric.ArrowPoint---------
   
   fabric.ArrowPoint.ATTRIBUTE_NAMES = 'belongsTo arrow end'.split(' ');
 
@@ -232,7 +238,7 @@ var utils = {
       var angle = Math.atan(this.height / this.width);
       return this.width < 0 ? 3* Math.PI + angle + Math.PI/2 : angle + Math.PI/2;
     }
-  });
+  }); //-----------end of fabric.Arrow---------
   
   
   fabric.Place = fabric.util.createClass(fabric.Object, {
@@ -241,6 +247,7 @@ var utils = {
     //selectable: false,
     hasControls: false,
     //stroke: 'black',
+    ends: [],
     
     initialize: function (options)
     {
@@ -251,10 +258,13 @@ var utils = {
       this.set('radius', options.radius || 0);
       
       var radiusBy2ByScale = this.get('radius') * 2 * this.get('scaleX');
-      this.set('width', radiusBy2ByScale).set('height', radiusBy2ByScale);
+      this.set('width', this.get('radius'));
+      this.set('height', this.get('radius'));
       
       this.mR = options.mR;
-      //this.arcs = new fabric.Group([]);
+      this.oldLeft = this.left;
+      this.oldTop = this.top;
+      this.ends.foreach = Array.prototype.foreach;
       
       this.markers = options.markers || 0;
       this.element = options.element;
@@ -324,6 +334,53 @@ var utils = {
       ctx.arc(0, 0, this.mR, 0, piBy2, false);
       ctx.closePath();
       ctx.fill();
+    },
+    
+    add: function (ele)
+    {
+      this.ends.push(ele);
+    },
+    
+    remove: function (ele)
+    {
+      var i;
+      for (i = 0; i < this.ends.length; i++)
+      {
+        if (this.ends[i] === ele)
+        {
+          this.ends.splice(i, 1);
+        }
+      }
+    },
+    
+    set: function (prop, val)
+    {
+      var i;
+      if (prop === 'top')
+      {
+        var i;
+        for (i = 0; i < this.ends.length; i++)
+        {
+          console.log(val, this.ends[i].top, this.top, val - this.top);
+          this.ends[i].move(prop, val - this.top);
+          console.log(val, this.ends[i].top, this.top, val - this.top);
+        }
+        this.top = val;
+      }
+      else if (prop === 'left')
+      {
+        //console.log(this.ends);
+        var i;
+        for (i = 0; i < this.ends.length; i++)
+        {
+          this.ends[i].move(prop, val - this.left);
+        }
+        this.left = val;
+      }
+      else
+      {
+        this[prop] = val;
+      }
     }
   });
   
