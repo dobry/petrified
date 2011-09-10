@@ -258,8 +258,8 @@ var utils = {
       this.set('radius', options.radius || 0);
       
       var radiusBy2ByScale = this.get('radius') * 2 * this.get('scaleX');
-      this.set('width', this.get('radius'));
-      this.set('height', this.get('radius'));
+      this.set('width', this.get('radius') * 2);
+      this.set('height', this.get('radius') * 2);
       
       this.mR = options.mR;
       this.oldLeft = this.left;
