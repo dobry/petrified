@@ -356,6 +356,11 @@ var utils = {
       ctx.fill();
     },
     
+    returnPoints: function ()
+    {
+      return this.points;
+    },
+    
     add: function (ele)
     {
       console.log(ele);
@@ -365,10 +370,13 @@ var utils = {
     remove: function (ele)
     {
       var i;
+      console.log("in remove place");
       for (i = 0; i < this.points.length; i++)
       {
+        console.log(ele, this.points[i]);
         if (this.points[i] === ele)
         {
+          console.log("removed", ele, this.points[i]);          
           this.points.splice(i, 1);
         }
       }
