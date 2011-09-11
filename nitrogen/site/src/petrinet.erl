@@ -9,6 +9,8 @@ main() -> #template { file = "./site/templates/petrinet.html" }.
 title() -> "Petri Nets".
 
 body() -> 
+  {Menu, Actions} = menu(net),
+  wf:wire(Actions),
   [
     #panel { id = "app", body = 
     [
@@ -21,7 +23,7 @@ body() ->
           #option { text = "Elementy", value = "elements" },
           #option { text = "Właściwości", value = "properties" }
         ]},
-        #panel { id = menu_items, body = menu(net) }
+        #panel { id = menu_items, body = Menu }
       ]},
       
       #panel { id = "editor", body = "<canvas id=\"canvas\"></canvas>" }
@@ -35,9 +37,9 @@ event(menu_select) ->
   wf:wire(#script { script = "petri.menu.setSelected(\"button-cursor\");" }),
   Menu_name = wf:q(menu_drop),
   case menu(list_to_atom(Menu_name)) of
-    {Menu, Script} ->
+    {Menu, Actions} ->
       wf:update(menu_items, Menu),
-      wf:wire(#script { script = Script });
+      wf:wire(Actions);
     Menu ->
       wf:update(menu_items, Menu)
   end,
@@ -93,17 +95,20 @@ menu(net) ->
     #button { text = "Zapisz do pliku", id = save_to_file },
     #hidden { id = save_to_file_data },
     #br {},#br {},
-    "<input value=\"Wyczyść\" type=\"button\" onclick=\"petri.clean();\" />"%#button { text = "Wyczyść", id = new_net }
+    %"<input value=\"Wyczyść\" type=\"button\" onclick=\"petri.clean();\" />"
+    #button { text = "Wyczyść", id = new_net }
   ],
   ToJSON = wf:f("petri.toJSON();"),
-  wf:wire(save_to_file, #event { type = click, actions =
+  Actions = 
   [
-    #script { script = ToJSON },
-    #event { postback = save_to_file }
-  ]}),
-  %NewNet = wf:f(),
-  %wf:wire(new_net, #event { type = click, actions = #script { script = NewNet } }),
-  Menu;
+    #event { trigger = new_net, type = click, actions = #script { script = "petri.clean();" } },
+    #event { trigger = save_to_file, type = click, actions =
+    [
+      #script { script = ToJSON },
+      #event { postback = save_to_file }
+    ]}
+  ],
+  {Menu, Actions};
 menu(elements) ->
   Menu = [
     "<label class=\"menu_description\">Aby dodać element zaznacz, a następnie kliknij w polu edytora.</label>",
@@ -115,7 +120,7 @@ menu(elements) ->
 	    <li title=\"button-marker\"><div id=\"floater\"><div id=\"content\"><div class=\"button-marker\"></div></div></div></li>
     </ol>"
   ],
-  {Menu, "utils.selectable();"};
+  {Menu, #script { script = "utils.selectable();" }};
 menu(properties) ->
   Menu = [
     "<label class=\"menu_description\">Właściwości zaznaczonego elementu.</label>",
