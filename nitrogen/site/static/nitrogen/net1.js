@@ -111,12 +111,26 @@ net.net_constructor = function (obj)
     
     canvas.observe('mouse:up', function(e)
     {
-      var element, obj, target
+      var element, obj, target,
         button = that.menu.selectedObject,
         menu = that.menu.selectedMenu;
       
       // check if element from menu is added
-      if (menu === 'elements' && button !== 'button-cursor')
+      console.log(button);
+      if (button === 'button-marker')
+      {
+        //element = (button.split('-'))[1];
+        target = e.memo.target;
+        if (target && target.type === 'place')
+        {
+          target.addMarker();
+          canvas.renderAll();
+        }
+        //target = canvas.findTarget(e.memo.e);
+        //console.log(e.memo.target, target, element);
+        //that.add({ x: mousePos.x, y: mousePos.y, element: element });                
+      }
+      else if (button !== 'button-cursor')
       {
         element = (button.split('-'))[1];
         that.add({ x: mousePos.x, y: mousePos.y, element: element });
@@ -124,6 +138,7 @@ net.net_constructor = function (obj)
       // check if some arrow was moved
       else
       {
+        console.log("tutaj?");
         obj = e.memo.target;
         if (obj && obj.type === 'arrow_point')
         {
@@ -337,15 +352,15 @@ net.net_constructor = function (obj)
   that.menu.setSelected = function (obj)
   {
     that.menu.selectedObject = obj;
-    if (obj !== "button-cursor")
+    if (obj !== "button-cursor" && obj !== 'button-marker')
     {
       // turn on object selection
-      canvas.selection = false;//true;
+      canvas.selection = false;
     }
     else 
     {
       // turn off selection
-      canvas.selection = true;//false;    
+      canvas.selection = true;    
     }
   };
   

@@ -340,7 +340,8 @@ var utils = {
       else
       {
         //console.log("więcej niż 6 markerów");
-        ctx.fillStyle = 'black';
+        this._renderMarker(ctx);        
+        ctx.fillStyle = this.stroke;//'black';
         ctx.font = '24px "Tahoma"';
         ctx.fillText(this.markers, 0, 0); 
       }
@@ -354,6 +355,11 @@ var utils = {
       ctx.arc(0, 0, this.mR, 0, piBy2, false);
       ctx.closePath();
       ctx.fill();
+    },
+    
+    addMarker: function ()
+    {
+      this.markers++;
     },
     
     returnPoints: function ()
