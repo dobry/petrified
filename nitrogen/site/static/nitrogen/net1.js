@@ -212,7 +212,7 @@ net.net_constructor = function (obj)
     // create arrow and its handles
     arrow = new fabric.Arrow({ strokeWidth: that.strokeWidth, from: p1, to: p2, element: obj.element, name: genName(obj) });
     
-    return [arrow, p1, p2];
+    return [p1, p2];//, arrow];
   };
   
   // set whole net

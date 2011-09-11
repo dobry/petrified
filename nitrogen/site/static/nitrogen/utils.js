@@ -92,7 +92,7 @@ var utils = {
     {
       // why did i do that?
       //console.log("renderFrom pos",this.get('left'), this.get('top'));
-      //this.arrow._render(ctx);
+      this.arrow._render(ctx);
     },
 
 /* BUG
@@ -198,6 +198,7 @@ var utils = {
     
     move: function (dir, val)
     {
+      //console.log("f");
       this.set(dir, this.get(dir) + val);
     }
   }); //---------end of fabric.ArrowPoint---------
@@ -207,7 +208,9 @@ var utils = {
   fabric.Arrow = fabric.util.createClass(fabric.Object, {
     
     type: 'arc',
-    selectable: false,
+    selectable: false,//true,
+    //lockMovementX: true,
+    //lockMovementY: true,
     hasControls: false,
     stroke: 'black',
     
@@ -264,20 +267,23 @@ var utils = {
     
     type: 'place',
     hasControls: false,
-    ends: [],
+    //points: [],
     
     initialize: function (options)
     {
       //console.log("ahoj'", options);
       options = options || { };
+      this.points = [];
       this.callSuper('initialize', options);
-      
       this.set('radius', options.radius || 0);
       
       this.set('width', this.get('radius') * 2);
       this.set('height', this.get('radius') * 2);
       
       this.mR = options.mR;
+      
+      
+      console.log("cokolwiek");//,0utils.is_array(this.points));
       
       this.markers = options.markers || 0;
       this.element = options.element;
@@ -286,6 +292,7 @@ var utils = {
     
     
     _render: function(ctx, noTransform) {
+      //console.log(this.points.length);
       ctx.beginPath();
       // multiply by currently set alpha (the one that was set by path group where this object is contained, for example)
       ctx.globalAlpha *= this.opacity;
@@ -351,17 +358,18 @@ var utils = {
     
     add: function (ele)
     {
-      this.ends.push(ele);
+      console.log(ele);
+      this.points.push(ele);
     },
     
     remove: function (ele)
     {
       var i;
-      for (i = 0; i < this.ends.length; i++)
+      for (i = 0; i < this.points.length; i++)
       {
-        if (this.ends[i] === ele)
+        if (this.points[i] === ele)
         {
-          this.ends.splice(i, 1);
+          this.points.splice(i, 1);
         }
       }
     },
@@ -372,21 +380,21 @@ var utils = {
       if (prop === 'top')
       {
         var i;
-        for (i = 0; i < this.ends.length; i++)
+        for (i = 0; i < this.points.length; i++)
         {
-          //console.log(val, this.ends[i].top, this.top, val - this.top);
-          this.ends[i].move(prop, val - this.top);
-          //console.log(val, this.ends[i].top, this.top, val - this.top);
+          //console.log(val, this.points[i].top, this.top, val - this.top);
+          this.points[i].move(prop, val - this.top);
+          //console.log(val, this.points[i].top, this.top, val - this.top);
         }
         this.top = val;
       }
       else if (prop === 'left')
       {
-        //console.log(this.ends);
+        //console.log(this.points);
         var i;
-        for (i = 0; i < this.ends.length; i++)
+        for (i = 0; i < this.points.length; i++)
         {
-          this.ends[i].move(prop, val - this.left);
+          this.points[i].move(prop, val - this.left);
         }
         this.left = val;
       }
@@ -403,14 +411,16 @@ var utils = {
     type: 'transition',
     lockScalingX: true,
     lockScalingY: true,
-    ends: [],
+    //points: [],
     
     initialize: function (options)
     {
       //console.log("ahoj'", options);
       options = options || { };
+      this.points = [];
       this.callSuper('initialize', options);
-      
+
+            
       this.beta = options.beta;
       this.angle = this.beta * Math.PI / 180;
       this.weight = options.weight;
@@ -441,17 +451,18 @@ var utils = {
     
     add: function (ele)
     {
-      this.ends.push(ele);
+      console.log(ele);
+      this.points.push(ele);
     },
     
     remove: function (ele)
     {
       var i;
-      for (i = 0; i < this.ends.length; i++)
+      for (i = 0; i < this.points.length; i++)
       {
-        if (this.ends[i] === ele)
+        if (this.points[i] === ele)
         {
-          this.ends.splice(i, 1);
+          this.points.splice(i, 1);
         }
       }
     },
@@ -462,21 +473,21 @@ var utils = {
       if (prop === 'top')
       {
         var i;
-        for (i = 0; i < this.ends.length; i++)
+        for (i = 0; i < this.points.length; i++)
         {
-          //console.log(val, this.ends[i].top, this.top, val - this.top);
-          this.ends[i].move(prop, val - this.top);
-          //console.log(val, this.ends[i].top, this.top, val - this.top);
+          console.log(val, this.points[i].top, this.top, val - this.top);
+          this.points[i].move(prop, val - this.top);
+          //console.log(val, this.points[i].top, this.top, val - this.top);
         }
         this.top = val;
       }
       else if (prop === 'left')
       {
-        //console.log(this.ends);
+        //console.log(this.points);
         var i;
-        for (i = 0; i < this.ends.length; i++)
+        for (i = 0; i < this.points.length; i++)
         {
-          this.ends[i].move(prop, val - this.left);
+          this.points[i].move(prop, val - this.left);
         }
         this.left = val;
       }
