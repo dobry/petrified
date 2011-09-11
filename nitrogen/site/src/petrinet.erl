@@ -108,10 +108,11 @@ menu(elements) ->
   Menu = [
     "<label class=\"menu_description\">Aby dodać element zaznacz, a następnie kliknij w polu edytora.</label>",
     "<ol id=\"selectable\">
+	    <li class=\"selected\" title=\"button-cursor\"><div class=\"button-cursor\"></div></li>
 	    <li title=\"button-transition\"><div class=\"button-transition\"></div></li>
 	    <li title=\"button-place\"><div class=\"button-place\"></div></li>
 	    <li title=\"button-arc\"><div class=\"button-arc\"></div></li>
-	    <li class=\"selected\" title=\"button-cursor\"><div class=\"button-cursor\"></div></li>
+	    <li title=\"button-marker\"><div id=\"floater\"><div id=\"content\"><div class=\"button-marker\"></div></div></div></li>
     </ol>"
   ],
   {Menu, "utils.selectable();"};

@@ -142,6 +142,16 @@ a:hover, a:active {
   border-bottom: 64px solid black;
 }
 
+.button-marker {
+  width: 10px;
+  height: 10px;
+  background: black;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  margin: auto;
+}
+
 #feedback { 
   font-size: 1.0em;
 }
@@ -162,7 +172,4 @@ a:hover, a:active {
   float: left; 
   width: 64px; 
   height: 64px; 
-  /*font-size: 4em;*/
-  text-align: center; 
 }
-		
