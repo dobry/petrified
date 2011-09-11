@@ -37,6 +37,7 @@ var utils = {
   var fabric = global.fabric || (global.fabric = { }),
       extend = fabric.util.object.extend,
       piBy2   = Math.PI * 2,
+      toFixed = fabric.util.toFixed,
       min = fabric.util.array.min,
       max = fabric.util.array.max,
       invoke = fabric.util.array.invoke,
@@ -95,6 +96,19 @@ var utils = {
       this.arrow._render(ctx);
     },
 
+    toJSON: function ()
+    {
+      if (this.end === 'from')
+      {
+        return {
+          element: this.arrow.type,
+          name: this.arrow.name,
+          from: this.belongsTo ? this.belongsTo.name : 'undefined',
+          to: this.arrow.to.belongsTo ? this.arrow.to.belongsTo.name : 'undefined'
+        };
+      }
+      else return {};
+    },
 /* BUG
   Strange behavior of arrow, when one of its points is selected in group select.
   The reason for that are coordinates of selected elements, which are set
@@ -283,7 +297,7 @@ var utils = {
       this.mR = options.mR;
       
       
-      console.log("cokolwiek");//,0utils.is_array(this.points));
+      //console.log("cokolwiek");//,0utils.is_array(this.points));
       
       this.markers = options.markers || 0;
       this.element = options.element;
@@ -365,6 +379,17 @@ var utils = {
     returnPoints: function ()
     {
       return this.points;
+    },
+    
+    toJSON: function ()
+    {
+      return {
+        element: this.type,
+        name: this.name,
+        x: toFixed(this.left, this.NUM_FRACTION_DIGITS),
+        y: toFixed(this.top, this.NUM_FRACTION_DIGITS),
+        markers: this.markers
+      }
     },
     
     add: function (ele)
@@ -463,9 +488,22 @@ var utils = {
       }
     },
     
+    toJSON: function ()
+    {
+      return {
+        element: this.type,
+        name: this.name,
+        x: toFixed(this.left, this.NUM_FRACTION_DIGITS),
+        y: toFixed(this.top, this.NUM_FRACTION_DIGITS),
+        weight: this.weight,
+        delay: this.delay,
+        angle: toFixed(this.angle, this.NUM_FRACTION_DIGITS)
+      }
+    },    
+    
     add: function (ele)
     {
-      console.log(ele);
+      //console.log(ele);
       this.points.push(ele);
     },
     

@@ -138,7 +138,7 @@ net.net_constructor = function (obj)
       // check if some arrow was moved
       else
       {
-        console.log("tutaj?");
+        //console.log("tutaj?");
         obj = e.memo.target;
         if (obj && obj.type === 'arrow_point')
         {
@@ -331,10 +331,22 @@ net.net_constructor = function (obj)
   
   that.toJSON = function ()
   {
-    alert("  that.toJSON = function()");
-    utils.getElementsByClass("wfid_save_to_file_data")[0].value = "info zwrotne";
+    var i, json,
+    data = { elements: [] },
+    all = canvas.getObjects();
+    console.log("łotot");
+    //alert("  that.toJSON = function()");
     // converse net data to JON
+    for (i = 0; i < all.length; i++)
+    {
+      json = all[i].toJSON();
+      //console.log(json);
+      data.elements.push(json)
+    }
+    console.log(canvas.toJSON());
+    console.log(data);
     // save it in hidden field
+    utils.getElementsByClass("wfid_save_to_file_data")[0].value = $.toJSON(data);
   };
   
   that.clean = function ()
