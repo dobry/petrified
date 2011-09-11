@@ -105,63 +105,47 @@ net.net_constructor = function (obj)
     canvas.observe('mouse:move', function(e)
     {
       var feed = document.getElementById('feed');
-      if (e.memo.target)
-      {
-        console.log("o", e.memo.target.name);
-      }
       mousePos = { x: e.memo.e.clientX - that.offsetX, y: e.memo.e.clientY - that.offsetY };
       feed.innerHTML = "(" + mousePos.x + ", " + mousePos.y + ")";
     });
     
-    canvas.observe('mouse:down', function(e)
-    {
-      var obj = e.memo.target;
-      if (obj && obj.type && obj.type === 'arrow_point')
-      {
-        //canvas.sendToBack(obj);
-        console.log("łooeeeeeeeeeee");
-      }
-    });
-    
     canvas.observe('mouse:up', function(e)
     {
-      //console.log("mouse:up - menu elements");
       var element, obj, target
         button = that.menu.selectedObject,
         menu = that.menu.selectedMenu;
+      
       // check if element from menu is added
       if (menu === 'elements' && button !== 'button-cursor')
       {
         element = (button.split('-'))[1];
         that.add({ x: mousePos.x, y: mousePos.y, element: element });
       }
-      //
+      // check if some arrow was moved
       else
       {
         obj = e.memo.target;
-        if (obj && obj.type && obj.type === 'arrow_point')
+        if (obj && obj.type === 'arrow_point')
         {
+          // push obj on the bottom, and if anything besides obj is here, it will come to surface
           canvas.sendToBack(obj);
-          
           target = canvas.findTarget(e.memo.e);
 
-          // remove old relation
+          // remove old relation from obj
           if (obj.belongsTo)
           {
             obj.belongsTo.remove(obj);
             obj.belogsTo = null;
-            console.log("state of obj.belongsTo",obj.belongsTo);
           }
 
           // create new relation, if target is present
           if (target && target.add)
           {
-            console.log("adding new relation with", target);
             target.add(obj);
             obj.belongsTo = target;          
           }
-          //console.log(canvas.containsPoint(e.memo.e, obj.belongsTo), obj.belongsTo.left, canvas.getPointer(e.memo.e));
-          console.log("łoo", target);
+          // bring back obj to the front, so it could be grabbed again without 
+          // moving other elements from the spot
           canvas.bringToFront(obj);
         }
       }

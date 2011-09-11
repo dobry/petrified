@@ -363,20 +363,20 @@ var utils = {
     
     add: function (ele)
     {
-      console.log(ele);
+      //console.log(ele);
       this.points.push(ele);
     },
     
     remove: function (ele)
     {
       var i;
-      console.log("in remove place");
+      //console.log("in remove place");
       for (i = 0; i < this.points.length; i++)
       {
-        console.log(ele, this.points[i]);
+        //console.log(ele, this.points[i]);
         if (this.points[i] === ele)
         {
-          console.log("removed", ele, this.points[i]);          
+          //console.log("removed", ele, this.points[i]);          
           this.points.splice(i, 1);
         }
       }
@@ -435,7 +435,7 @@ var utils = {
       this.delay = options.delay;
       this.set('radius', options.radius || 0);      
       this.mR = options.mR;
-
+      this.width = this.radius;
       
       this.element = options.element;
       this.name = options.name;
@@ -447,7 +447,7 @@ var utils = {
       ctx.globalAlpha *= this.opacity;
       ctx.strokeStyle = this.stroke;
       ctx.fillStyle = this.fill;
-      ctx.rect(-this.mR, -this.radius, this.width, this.height);
+      ctx.rect(-this.mR, -this.radius, this.mR * 2, this.height);
       ctx.closePath();
       if (this.fill) {
         ctx.fill();
