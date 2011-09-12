@@ -332,21 +332,21 @@ net.net_constructor = function (obj)
   that.toJSON = function ()
   {
     var i, json,
-    data = { elements: [] },
+    elements = [],
     all = canvas.getObjects();
-    console.log("łotot");
+    //console.log("łotot");
     //alert("  that.toJSON = function()");
     // converse net data to JON
     for (i = 0; i < all.length; i++)
     {
       json = all[i].toJSON();
       //console.log(json);
-      data.elements.push(json)
+      elements.push(json)
     }
     console.log(canvas.toJSON());
-    console.log(data);
+    console.log(elements);
     // save it in hidden field
-    utils.getElementsByClass("wfid_save_to_file_data")[0].value = $.toJSON(data);
+    utils.getElementsByClass("wfid_save_to_file_data")[0].value = $.toJSON(elements);
   };
   
   that.clean = function ()

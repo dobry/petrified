@@ -50,7 +50,28 @@ event(menu_select) ->
 event(save_to_file) ->
   io:format("got save_to_file postback:~n"),
   Data = wf:q(save_to_file_data),
-  io:format("~p~n", [Data]),
+  Text = wf:f("~p~n", [Data]),
+  
+  Res = mochijson2:decode(Data),
+  %Strings = printer:format(Res),
+  
+  case file:make_dir("./site/tmp/") of
+    ok -> ok;
+    {error, eexist} -> ok
+  end,
+  {ok, Device} = file:open("toturesult", write),  
+  %ok = printer:print(Device, Strings),
+  
+  %Text1 = wf:f("~p~n", [Res]),
+  %ok = file:set_cwd("./tmp/"),
+  %{ok, Device} = file:open("toturesult", write),
+  %io:write(Device, Res),
+  %io:write(Device, "~n~n~n"),  
+  io:format(Text),
+  printer:print(Device, Res),
+  %io:write(Device, Text),
+  %file:close(Device),
+  %%wf:
   ok.  
 
 drop_event(Drag_tag, canvas_drop) ->

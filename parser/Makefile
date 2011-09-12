@@ -1,6 +1,9 @@
-all: reader.beam scanner.beam parser.beam logger.beam petrijson.beam
+all: reader.beam scanner.beam parser.beam logger.beam petrijson.beam printer.beam
 	mkdir -p ../nitrogen/lib/parser
-	cp reader.beam scanner.beam parser.beam logger.beam petrijson.beam ../nitrogen/lib/parser/
+	cp reader.beam scanner.beam parser.beam logger.beam petrijson.beam printer.beam ../nitrogen/lib/parser/
+
+printer.beam: printer.erl
+	erl -compile printer.erl
 
 reader.beam: reader.erl
 	erl -compile reader.erl
