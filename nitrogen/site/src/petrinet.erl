@@ -93,10 +93,16 @@ finish_upload_event(_Tag, _FileName, LocalFileData, Node) ->
   io:format("Uploaded file: ~s (~p bytes) on node ~s.~nParsing...", [LocalFileData, FileSize, Node]),
   
   % prepare net data
-  {ok, Parsed} = petrijson:parse(scanner:tokenize(LocalFileData)),
-  io:format("parsed~p~n", [Parsed]),
+  % old parser
+  %{ok, Parsed} = petrijson:parse(scanner:tokenize(LocalFileData)),
+  
+  % new parser
+  {ok, Parsed1} = parser2:parse(scanner2:tokenize(LocalFileData)),
+  Parsed = {struct,[{elements, Parsed1}]},
+
+  %io:format("parsed~p~n", [Parsed]),
   JSONed = mochijson2:encode(Parsed),
-  io:format("got net data~n"),
+  %io:format("got net data~n"),
 
   % execute js script with data
   io:format("~s~n", [JSONed]),
@@ -115,7 +121,6 @@ menu(net) ->
     #button { text = "Zapisz do pliku", id = save_to_file },
     #hidden { id = save_to_file_data },
     #br {},#br {},
-    %"<input value=\"Wyczyść\" type=\"button\" onclick=\"petri.clean();\" />"
     #button { text = "Wyczyść", id = new_net }
   ],
   ToJSON = wf:f("petri.toJSON();"),
@@ -134,11 +139,11 @@ menu(elements) ->
     "<label class=\"menu_description\">Aby dodać element zaznacz, a następnie kliknij w polu edytora.</label>",
     "<ol id=\"selectable\">
 	    <li class=\"selected\" title=\"button-cursor\"><img alt=\"cursor\" src=\"images/cursor.png\" /></li>
-	    <li title=\"button-delete\"><img alt=\"cursor\" src=\"images/delete.png\" /></li>
-	    <li title=\"button-transition\"><img alt=\"cursor\" src=\"images/transition.png\" /></div></li>
-	    <li title=\"button-place\"><img alt=\"cursor\" src=\"images/place.png\" /></li>
-	    <li title=\"button-arc\"><img alt=\"cursor\" src=\"images/arc.png\" /></li>
-	    <li title=\"button-marker\"><img alt=\"cursor\" src=\"images/marker.png\" /></li>
+	    <li title=\"button-delete\"><img alt=\"delete\" src=\"images/delete.png\" /></li>
+	    <li title=\"button-transition\"><img alt=\"transition\" src=\"images/transition.png\" /></div></li>
+	    <li title=\"button-place\"><img alt=\"place\" src=\"images/place.png\" /></li>
+	    <li title=\"button-arc\"><img alt=\"arc\" src=\"images/arc.png\" /></li>
+	    <li title=\"button-marker\"><img alt=\"marker\" src=\"images/marker.png\" /></li>
     </ol>"
   ],
   {Menu, #script { script = "utils.selectable();" }};

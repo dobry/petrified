@@ -1,4 +1,5 @@
 *.beam
 parser.erl
 petrijson.erl
+parser2.erl
 erlang-programming.pdf

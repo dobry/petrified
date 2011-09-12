@@ -325,6 +325,7 @@ net.net_constructor = function (obj)
   
   that.add = function (proto)
   {
+    console.log(proto);
     var ele = that.constructors[proto.element](proto);
     if (utils.is_array(ele))
     {
