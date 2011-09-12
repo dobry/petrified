@@ -27,7 +27,8 @@ body() ->
       ]},
       
       #panel { id = "editor", body = "<canvas id=\"canvas\"></canvas>" }
-    ]}
+    ]},
+    #panel { id = feed, body = " " }
   ].
 
 
@@ -96,19 +97,31 @@ finish_upload_event(_Tag, _FileName, LocalFileData, Node) ->
   % old parser
   %{ok, Parsed} = petrijson:parse(scanner:tokenize(LocalFileData)),
   
-  % new parser
-  {ok, Parsed1} = parser2:parse(scanner2:tokenize(LocalFileData)),
-  Parsed = {struct,[{elements, Parsed1}]},
+  case scanner2:tokenize(LocalFileData) of
+    {error, Reason} ->
+      NewFeed = wf:f("Error:Line:~p Message:~p", [Line_number, Module, Reason]),
+      wf:update(feed, NewFeed);
+    Scanned ->
+      % new parser
+      case parser2:parse(Scanned) of
+        {ok, Parsed1} ->
+          Parsed = {struct,[{elements, Parsed1}]},
 
-  %io:format("parsed~p~n", [Parsed]),
-  JSONed = mochijson2:encode(Parsed),
-  %io:format("got net data~n"),
+          %io:format("parsed~p~n", [Parsed]),
+          JSONed = mochijson2:encode(Parsed),
+          %io:format("got net data~n"),
 
-  % execute js script with data
-  io:format("~s~n", [JSONed]),
-  Script = wf:f("petri.start(~s);", [JSONed]),
-  wf:wire(#script { script = Script }),
-  io:format("lauched js script~n"),
+          % execute js script with data
+          io:format("~s~n", [JSONed]),
+          Script = wf:f("petri.start(~s);", [JSONed]),
+          wf:wire(#script { script = Script }),
+          io:format("lauched js script~n");
+        {error, {Line_number, Module, Message}} ->
+          %Feed = wf:q(feed),
+          NewFeed = wf:f("Error:Line:~p Message:~p", [Line_number, Module, Message]),
+          wf:update(feed, NewFeed)
+      end
+    end,
   ok.
 
 %% menu context generators
