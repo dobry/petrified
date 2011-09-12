@@ -11,7 +11,7 @@ body() ->
   {ok, Dir} = file:get_cwd(), 
   io:format("~s~n", [Dir]),
   case file:open("site/tmp/result", read) of
-    {ok, Device} ->   loop(Device, []);
+    {ok, Device} ->   lists:reverse(loop(Device, []));
     {error, Reason} -> io:format("~s", [Reason])
   end.
 

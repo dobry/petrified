@@ -111,7 +111,7 @@ net.net_constructor = function (obj)
     
     canvas.observe('mouse:up', function(e)
     {
-      var element, obj, target,
+      var i, element, obj, target,
         button = that.menu.selectedObject,
         menu = that.menu.selectedMenu;
       
@@ -129,6 +129,33 @@ net.net_constructor = function (obj)
         //target = canvas.findTarget(e.memo.e);
         //console.log(e.memo.target, target, element);
         //that.add({ x: mousePos.x, y: mousePos.y, element: element });                
+      }
+      else if (button === 'button-delete')
+      {
+        target = e.memo.target;
+        console.log(target);
+        if (target)
+        {
+          if (target.type === 'place' || target.type === 'transition')
+          {
+            for (i = 0; i < target.points.length; i++)
+            {
+              if (target.points[i])
+              {
+                target.points[i].belongsTo = null;              
+              }
+            }
+            canvas.remove(target);
+          }
+          else if (target.type === 'arrow_point')
+          {
+            i = target.arrow;
+            canvas.remove(i.to);
+            canvas.remove(i.from);
+            //canvas.remove(i);
+          }
+          canvas.renderAll();
+        }
       }
       else if (button !== 'button-cursor')
       {
@@ -364,7 +391,7 @@ net.net_constructor = function (obj)
   that.menu.setSelected = function (obj)
   {
     that.menu.selectedObject = obj;
-    if (obj !== "button-cursor" && obj !== 'button-marker')
+    if (obj !== "button-cursor" && obj !== 'button-marker' && obj !== "button-delete")
     {
       // turn on object selection
       canvas.selection = false;

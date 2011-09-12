@@ -134,6 +134,7 @@ menu(elements) ->
     "<label class=\"menu_description\">Aby dodać element zaznacz, a następnie kliknij w polu edytora.</label>",
     "<ol id=\"selectable\">
 	    <li class=\"selected\" title=\"button-cursor\"><img alt=\"cursor\" src=\"images/cursor.png\" /></li>
+	    <li title=\"button-delete\"><img alt=\"cursor\" src=\"images/delete.png\" /></li>
 	    <li title=\"button-transition\"><img alt=\"cursor\" src=\"images/transition.png\" /></div></li>
 	    <li title=\"button-place\"><img alt=\"cursor\" src=\"images/place.png\" /></li>
 	    <li title=\"button-arc\"><img alt=\"cursor\" src=\"images/arc.png\" /></li>
