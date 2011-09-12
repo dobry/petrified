@@ -59,19 +59,18 @@ event(save_to_file) ->
     ok -> ok;
     {error, eexist} -> ok
   end,
-  {ok, Device} = file:open("toturesult", write),  
-  %ok = printer:print(Device, Strings),
+  ok = file:set_cwd("./site/tmp/"),
+  {ok, Device} = file:open("result", write),  
   
-  %Text1 = wf:f("~p~n", [Res]),
-  %ok = file:set_cwd("./tmp/"),
-  %{ok, Device} = file:open("toturesult", write),
-  %io:write(Device, Res),
-  %io:write(Device, "~n~n~n"),  
   io:format(Text),
   printer:print(Device, Res),
-  %io:write(Device, Text),
-  %file:close(Device),
-  %%wf:
+  file:close(Device),
+  
+  {ok, Dir} = file:get_cwd(),
+  Ref = io_lib:format("file://~s/result", [Dir]),
+  io:format("'~s'",[Ref]),
+  wf:insert_bottom(menu_items, "<a href=\"result\">Wygenerowany plik</a>" ),%Ref }),
+  ok = file:set_cwd("../../"),
   ok.  
 
 drop_event(Drag_tag, canvas_drop) ->

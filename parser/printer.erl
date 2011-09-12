@@ -42,7 +42,7 @@ attr({Name, Value}) ->
 
 printObj(Device, {Element, AttrStrings}) ->
   io:fwrite(Device, "~s~n", [Element]),
-  printAttr(Device, AttrStrings),% TODO write the rest of obj
+  printAttr(Device, AttrStrings),
   io:fwrite(Device, "~s~n", ["end"]),
   ok.
 
