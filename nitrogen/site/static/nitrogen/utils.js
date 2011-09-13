@@ -198,7 +198,10 @@ var utils = {
     
     get: function (prop)
     {
-      if (prop === 'element') return this.arrow.element;
+      if (prop === 'element')
+        return this.arrow.element;
+      else if (prop === 'name')
+        return this.arrow.name;
       else return this[prop];
       
     },
@@ -459,9 +462,10 @@ var utils = {
       this.points = [];
       this.callSuper('initialize', options);
 
-            
+      console.log(options.beta);      
       this.beta = options.beta;
       this.angle = this.beta * Math.PI / 180;
+      this.theta = this.beta / 180;
       this.weight = options.weight;
       this.delay = options.delay;
       this.set('radius', options.radius || 0);      
@@ -490,6 +494,7 @@ var utils = {
     
     toJSON: function ()
     {
+      console.log("trans.angle", this.theta, this.angle, toFixed(this.angle * 180, this.NUM_FRACTION_DIGITS));
       return {
         element: this.type,
         name: this.name,
@@ -497,7 +502,7 @@ var utils = {
         y: toFixed(this.top, this.NUM_FRACTION_DIGITS),
         weight: this.weight,
         delay: this.delay,
-        angle: toFixed(this.angle, this.NUM_FRACTION_DIGITS)
+        angle: toFixed(this.theta * 180, this.NUM_FRACTION_DIGITS)
       }
     },    
     

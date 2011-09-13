@@ -61,36 +61,34 @@ a:hover, a:active {
 .wfid_app {
   position: relative;
   margin: 10px;
-  background-color: #fff;
+  background-color: #369;
   color: #333;
-  border: 1px solid gray;
   line-height: 130%;
+  padding: 10px;
+  border: 1px outset #999;
 }
 
 .wfid_floating_messages {
   position: absolute;
   width: 600px;
   float: left;
-  border: 1px solid red;
 }
 
 .wfid_editor {
-  border-left: 1px solid gray;
-  margin-right: 240px;
-  border-right: 1px solid gray;
-  padding: 1em;
+  padding: 5px;
 }
 
 .wfid_menus {
   float: right;
   width: 200px;
   margin: 0;
-  padding: 1em;
-  border: 1px solid green;
+  padding: 5px;
+  color: #fff;
+  font-family: sans-serif;
 }
 
 #canvas {
-  border: 1px solid orange;
+  border: 1px inset orange;
 }
 
 .wfid_controls {
@@ -172,4 +170,8 @@ a:hover, a:active {
   float: left; 
   width: 64px; 
   height: 64px; 
+}
+
+.canvas-container {
+  background-color: white;
 }

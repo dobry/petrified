@@ -94,16 +94,13 @@ finish_upload_event(_Tag, _FileName, LocalFileData, Node) ->
   io:format("Uploaded file: ~s (~p bytes) on node ~s.~nParsing...", [LocalFileData, FileSize, Node]),
   
   % prepare net data
-  % old parser
-  %{ok, Parsed} = petrijson:parse(scanner:tokenize(LocalFileData)),
-  
-  case scanner2:tokenize(LocalFileData) of
-    {error, Reason} ->
-      NewFeed = wf:f("Error:Line:~p Message:~p", [Line_number, Module, Reason]),
+  case scanner:tokenize(LocalFileData) of
+    {error, Line_number, Reason} ->
+      NewFeed = wf:f("Error: Line:~p Reason:~p", [Line_number, Reason]),
       wf:update(feed, NewFeed);
     Scanned ->
       % new parser
-      case parser2:parse(Scanned) of
+      case parser:parse(Scanned) of
         {ok, Parsed1} ->
           Parsed = {struct,[{elements, Parsed1}]},
 
@@ -116,9 +113,9 @@ finish_upload_event(_Tag, _FileName, LocalFileData, Node) ->
           Script = wf:f("petri.start(~s);", [JSONed]),
           wf:wire(#script { script = Script }),
           io:format("lauched js script~n");
-        {error, {Line_number, Module, Message}} ->
+        {error, {Line_number, _Module, Message}} ->
           %Feed = wf:q(feed),
-          NewFeed = wf:f("Error:Line:~p Message:~p", [Line_number, Module, Message]),
+          NewFeed = wf:f("Error: Line: ~p Message: ~s", [Line_number, Message]),
           wf:update(feed, NewFeed)
       end
     end,

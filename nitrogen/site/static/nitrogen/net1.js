@@ -21,17 +21,29 @@ net.net_constructor = function (obj)
     },
     mousePos = { x: 0, y: 0 },
     properties = {
-      place: function ()
+      place: function (obj)
       {
-        return "place";
+        return "place<br />" + 
+        "name: " + obj.get('name') + "<br />" +
+        "left: " + obj.get('left') + "<br />" +
+        "top: " + obj.get('top') + "<br />";
       },
-      transition: function ()
+      transition: function (obj)
       {
-        return "transition";
+        return "transition<br />" + 
+        "name: " + obj.get('name') + "<br />" +
+        "left: " + obj.get('left') + "<br />" +
+        "top: " + obj.get('top') + "<br />" +
+        "angle: " + obj.get('angle') + "<br />" +
+        "theta: " + obj.get('theta') + "<br />";
       },
-      arc: function ()
+      arc: function (obj)
       {
-        return "arc";
+        console.log(obj);
+        return "arc<br />" + 
+        "name: " + obj.get('name') + "<br />" +
+        "left: " + obj.get('left') + "<br />" +
+        "top: " + obj.get('top') + "<br />";
       }
     };
 
@@ -102,14 +114,19 @@ net.net_constructor = function (obj)
     });
     
     // getting mouse position and printing it in feed label
-    canvas.observe('mouse:move', function(e)
+    canvas.observe('mouse:move', function (e)
     {
       var feed = document.getElementById('feed');
       mousePos = { x: e.memo.e.clientX - that.offsetX, y: e.memo.e.clientY - that.offsetY };
       feed.innerHTML = "(" + mousePos.x + ", " + mousePos.y + ")";
     });
     
-    canvas.observe('mouse:up', function(e)
+    /*canvas.observe('mouse:down', function (e)
+    {
+      e.memo.target && canvas.setToBack(e.memo.target);
+    });*/
+    
+    canvas.observe('mouse:up', function (e)
     {
       var i, element, obj, target,
         button = that.menu.selectedObject,
