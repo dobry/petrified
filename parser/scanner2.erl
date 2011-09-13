@@ -6,9 +6,15 @@
 tokenize(File) ->
   case reader:init(File) of
     ok ->
-      Tok_List = lists:reverse(in_source([], [], 1)),
-      reader:close(),
-      Tok_List;
+      case in_source([], [], 1) of
+        {error, Line, Reason} ->
+          reader:close(),
+          {error, Line, Reason};
+        List ->
+        Tok_List = lists:reverse(List),
+        reader:close(),
+        Tok_List
+      end;
     {error, Reason} ->
       {error, Reason}
   end.   

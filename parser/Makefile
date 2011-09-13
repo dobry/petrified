@@ -25,10 +25,12 @@ petrijson.beam: petrijson.yrl
 scanner2.beam: scanner2.erl
 	erl -compile scanner2.erl
 
-parser2.beam: parser2.erl
+parser2.beam: parser2.yrl
 	echo "yecc:file(parser2.yrl)." | erl
 	erl -compile parser2.erl
 
 clean:
 	rm *.beam
 	rm parser.erl
+	rm parser2.erl
+	rm petrijson.erl

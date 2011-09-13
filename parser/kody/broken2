@@ -1,0 +1,21 @@
+place
+  markers 1
+  y 100
+  x 100
+  name p0
+end
+place
+  markers 1
+  y 300
+  x 100
+  name p2
+
+transition
+  angle 0
+  delay 1.504
+  weight 1
+  y 44
+  x 252
+  name t0
+end
+
