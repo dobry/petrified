@@ -13,8 +13,9 @@ net.net_constructor = function (obj)
     fill = '#fff',
     mR = 5, // marker radius
     pR = 30, // place radius and half of transition length
-    counters = // for naming purposes
+    counters = // for naming and generating id purposes
     {
+      id: 0,
       place: 0,
       transition: 0,
       arc: 0
@@ -39,7 +40,7 @@ net.net_constructor = function (obj)
       },
       arc: function (obj)
       {
-        console.log(obj);
+        //console.log(obj);
         return "arc<br />" + 
         "name: " + obj.get('name') + "<br />" +
         "left: " + obj.get('left') + "<br />" +
@@ -47,19 +48,16 @@ net.net_constructor = function (obj)
       }
     };
 
-  function genName (obj)
+  // generates unique id for given obj type (and name if needed)
+  function genIdentity (obj)
   {
-    var name;
-    if (!obj.name)
-    {
-      name = obj.element + counters[obj.element];
-      counters[obj.element]++;
-    }
-    else
-    {
-      name = obj.name;
-    }
-    return name;
+    var id = counters['id'];
+    counters[obj.element]++;
+    counters['id']++;
+    return {
+      name : (!obj.name ? obj.element + counters[obj.element] : obj.name),
+      id : id
+    };
   }
   
   function init ()
@@ -225,8 +223,10 @@ net.net_constructor = function (obj)
   // place constructor
   that.constructors['place'] = function (obj)
   {
+    var identity = genIdentity(obj);
     //console.log("construct place", obj);
     var ele = new fabric.Place({ 
+      id: identity.id,
       markers: obj.markers, 
       strokeWidth: strokeWidth, 
       radius: pR, 
@@ -234,7 +234,7 @@ net.net_constructor = function (obj)
       fill: fill, 
       top: obj.y, 
       left: obj.x,
-      name: genName(obj),
+      name: identity.name,
       mR: mR,
       element: obj.element
     });
@@ -246,7 +246,9 @@ net.net_constructor = function (obj)
   {
     //console.log("construct trans");
     //console.log(obj);
+    var identity = genIdentity(obj);
     var ele = new fabric.Transition({
+      id: identity.id,
       strokeWidth: strokeWidth,
       left: obj.x,
       top: obj.y, 
@@ -257,7 +259,7 @@ net.net_constructor = function (obj)
       mR: mR,
       radius: pR, 
       element: obj.element,
-      name: genName(obj),
+      name: identity.name,
       beta: obj.angle || 0,
       weight: obj.weight || 1,
       delay: obj.delay || 1
@@ -270,6 +272,7 @@ net.net_constructor = function (obj)
   {
     //console.log("construct arc", obj);
     var p1, p2, arrow, from, to;
+    var identity = genIdentity(obj);
     
     // init grip point with its owner if exist or coords from mouse
     if (obj.from)
@@ -297,7 +300,7 @@ net.net_constructor = function (obj)
     
     
     // create arrow and its handles
-    arrow = new fabric.Arrow({ strokeWidth: that.strokeWidth, from: p1, to: p2, element: obj.element, name: genName(obj) });
+    arrow = new fabric.Arrow({ id: identity.id, strokeWidth: that.strokeWidth, from: p1, to: p2, element: obj.element, name: identity.name });
     
     return [p1, p2];//, arrow];
   };
@@ -342,7 +345,7 @@ net.net_constructor = function (obj)
   
   that.add = function (proto)
   {
-    console.log(proto);
+    //console.log(proto);
     var ele = that.constructors[proto.element](proto);
     if (utils.is_array(ele))
     {
@@ -356,6 +359,7 @@ net.net_constructor = function (obj)
     {
       canvas.add(ele);
     }
+    //console.log(ele);
   };
   
   that.set_mouse_pos = function (obj)
@@ -379,17 +383,19 @@ net.net_constructor = function (obj)
     var i, json,
     elements = [],
     all = canvas.getObjects();
+    //console.log(all);
     //console.log("łotot");
     //alert("  that.toJSON = function()");
-    // converse net data to JON
+    // convert net data to JON
     for (i = 0; i < all.length; i++)
     {
+      //console.log(all[i]);
       json = all[i].toJSON();
       //console.log(json);
-      elements.push(json)
+      elements.push(json);
     }
-    console.log(canvas.toJSON());
-    console.log(elements);
+    //console.log(canvas.toJSON());
+    //console.log(elements);
     // save it in hidden field
     utils.getElementsByClass("wfid_net_data")[0].value = $.toJSON(elements);
   };

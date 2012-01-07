@@ -61,6 +61,7 @@ event(sim_build) ->
   io:format("sim_build event~n"),
   JSON = wf:q(net_data),
   List = mochijson2:decode(JSON),
+  io:format("~p~n", [List]),
   simulation:init(List);
 event(sim_play) ->
   io:format("sim_play event~n");
@@ -172,7 +173,6 @@ menu(edit) ->
       %#script { script = wf:f("petri.toJSON();") },
       #event { postback = sim_stop }
     ]},
-
     #script { script = "utils.selectable();" }
   ],
   {Menu, Actions};

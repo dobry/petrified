@@ -98,9 +98,11 @@ var utils = {
 
     toJSON: function ()
     {
+      //console.log(this);
       if (this.end === 'from')
       {
         return {
+          id: this.arrow.id,
           element: this.arrow.type,
           name: this.arrow.name,
           from: this.belongsTo ? this.belongsTo.name : 'undefined',
@@ -251,6 +253,7 @@ var utils = {
       this.strokeWidth = options.strokeWidth;
       this.element = options.element;
       this.name = options.name;
+      this.id = options.id;
     },
     
     _render: function (ctx)
@@ -305,6 +308,7 @@ var utils = {
       this.markers = options.markers || 0;
       this.element = options.element;
       this.name = options.name;
+      this.id = options.id;
     },
     
     
@@ -386,7 +390,9 @@ var utils = {
     
     toJSON: function ()
     {
+      //console.log(this);
       return {
+        id: this.id,
         element: this.type,
         name: this.name,
         x: toFixed(this.left, this.NUM_FRACTION_DIGITS),
@@ -474,6 +480,7 @@ var utils = {
       
       this.element = options.element;
       this.name = options.name;
+      this.id = options.id;
     },
     
     
@@ -494,8 +501,10 @@ var utils = {
     
     toJSON: function ()
     {
-      console.log("trans.angle", this.theta, this.angle, toFixed(this.angle * 180, this.NUM_FRACTION_DIGITS));
+      //console.log("trans.angle", this.theta, this.angle, toFixed(this.angle * 180, this.NUM_FRACTION_DIGITS));
+      //console.log(this);
       return {
+        id: this.id,
         element: this.type,
         name: this.name,
         x: toFixed(this.left, this.NUM_FRACTION_DIGITS),
