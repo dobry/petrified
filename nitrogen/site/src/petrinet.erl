@@ -27,10 +27,11 @@ body() ->
 
 
 %%% event handlers
-  
+%event(init_simulation) ->
+%  Data = wf:q(net_data),
 event(save_to_file) ->
   io:format("got save_to_file postback:~n"),
-  Data = wf:q(save_to_file_data),
+  Data = wf:q(net_data),
   Text = wf:f("~p~n", [Data]),
   
   Res = mochijson2:decode(Data),
@@ -53,8 +54,17 @@ event(save_to_file) ->
   Ref = io_lib:format("file://~s/result", [Dir]),
   io:format("'~s'",[Ref]),
   wf:insert_bottom(menu_items, "<a href=\"result\">Wygenerowany plik</a>" ),%Ref }),
-  ok = file:set_cwd("../../"),
-  ok.  
+  ok = file:set_cwd("../../");
+
+%% simulation GUI events
+event(sim_build) ->
+  io:format("sim_build event~n");
+event(sim_play) ->
+  io:format("sim_play event~n");
+event(sim_pause) ->
+  io:format("sim_pause event~n");
+event(sim_stop) ->
+  io:format("sim_stop event~n").
 
 drop_event(Drag_tag, canvas_drop) ->
   % execute js script with data
@@ -110,11 +120,14 @@ menu(edit) ->
       "<label class=\"menu_description\">Wczytaj z pliku</label>",
       #br {},
       #upload { class = upload_field, tag = myUpload1, show_button = false },
-      #br {},
+      #hidden { id = net_data },
       #button { text = "Zapisz do pliku", id = save_to_file },
-      #hidden { id = save_to_file_data },
+      #button { text = "Wyczyść", id = new_net },
       #br {},#br {},
-      #button { text = "Wyczyść", id = new_net }
+      #button { text = "build", id = sim_build },
+      #button { text = "play", id = sim_play },
+      #button { text = "pause", id = sim_pause },
+      #button { text = "stop", id = sim_stop }
     ]},
     #panel { class = "menu", id = elements, body = [
       "<label class=\"menu_description\">Aby dodać element zaznacz, a następnie kliknij w polu edytora.</label>
@@ -128,15 +141,35 @@ menu(edit) ->
       </ol>"
     ]}
   ],
-  ToJSON = wf:f("petri.toJSON();"),
   Actions = 
   [
-    #event { trigger = new_net, type = click, actions = #script { script = "petri.clean();" } },
     #event { trigger = save_to_file, type = click, actions =
     [
-      #script { script = ToJSON },
+      #script { script = wf:f("petri.toJSON();") },
       #event { postback = save_to_file }
     ]},
+    #event { trigger = new_net, type = click, actions = #script { script = "petri.clean();" } },
+    #event { trigger = sim_build, type = click, actions =
+    [
+      %#script { script = wf:f("petri.toJSON();") },
+      #event { postback = sim_build }
+    ]},
+    #event { trigger = sim_play, type = click, actions =
+    [
+      %#script { script = wf:f("petri.toJSON();") },
+      #event { postback = sim_play }
+    ]},
+    #event { trigger = sim_pause, type = click, actions =
+    [
+      %#script { script = wf:f("petri.toJSON();") },
+      #event { postback = sim_pause }
+    ]},
+    #event { trigger = sim_stop, type = click, actions =
+    [
+      %#script { script = wf:f("petri.toJSON();") },
+      #event { postback = sim_stop }
+    ]},
+
     #script { script = "utils.selectable();" }
   ],
   {Menu, Actions};

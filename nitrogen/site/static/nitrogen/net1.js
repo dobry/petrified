@@ -391,7 +391,7 @@ net.net_constructor = function (obj)
     console.log(canvas.toJSON());
     console.log(elements);
     // save it in hidden field
-    utils.getElementsByClass("wfid_save_to_file_data")[0].value = $.toJSON(elements);
+    utils.getElementsByClass("wfid_net_data")[0].value = $.toJSON(elements);
   };
   
   that.clean = function ()
