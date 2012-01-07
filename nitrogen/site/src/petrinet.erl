@@ -58,7 +58,10 @@ event(save_to_file) ->
 
 %% simulation GUI events
 event(sim_build) ->
-  io:format("sim_build event~n");
+  io:format("sim_build event~n"),
+  JSON = wf:q(net_data),
+  List = mochijson2:decode(JSON),
+  simulation:init(List);
 event(sim_play) ->
   io:format("sim_play event~n");
 event(sim_pause) ->
@@ -151,7 +154,7 @@ menu(edit) ->
     #event { trigger = new_net, type = click, actions = #script { script = "petri.clean();" } },
     #event { trigger = sim_build, type = click, actions =
     [
-      %#script { script = wf:f("petri.toJSON();") },
+      #script { script = wf:f("petri.toJSON();") },
       #event { postback = sim_build }
     ]},
     #event { trigger = sim_play, type = click, actions =

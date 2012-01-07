@@ -21,11 +21,14 @@ group_elements(Places, Transitions, Arcs, [{struct, Attributes} | List]) ->
       group_elements(Places, Transitions, Arcs, List);
     [Type | Attr] ->
       case Type of
-        {"element","place"} ->
+        {<<"element">>, <<"place">>} ->
           group_elements([Attr | Places], Transitions, Arcs, List);
-        {"element","transition"} ->
+        {<<"element">>, <<"transition">>} ->
           group_elements(Places, [Attr | Transitions], Arcs, List);
-        {"element","arc"} ->
-          group_elements(Places, Transitions, [Attr | Arcs], List)
+        {<<"element">>, <<"arc">>} ->
+          group_elements(Places, Transitions, [Attr | Arcs], List);
+        % TODO: remove this case after testing
+        Other ->
+          io:format("~p~n", [Other])
       end
   end.
