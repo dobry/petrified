@@ -311,6 +311,7 @@ var utils = {
       this.element = options.element;
       this.name = options.name;
       this.id = options.id;
+      this.capacity = options.capacity || -1;
     },
     
     
@@ -399,7 +400,8 @@ var utils = {
         name: this.name,
         x: toFixed(this.left, this.NUM_FRACTION_DIGITS),
         y: toFixed(this.top, this.NUM_FRACTION_DIGITS),
-        markers: this.markers
+        markers: this.markers,
+        capacity: this.capacity
       }
     },
     

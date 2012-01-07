@@ -4,10 +4,9 @@
 
 init(List) ->
   %io:format("TT~pTT~n", [List]),
-  %{ok, _Places, _Transitions, _Arcs} = 
-  Res = group_elements(List),
+  {ok, Places, _Transitions, _Arcs} = group_elements(List),
   %io:format("TT~pTT~n", [Res]),
-  %places:init(Places).
+  places:init(Places),
   ok.
 
 % splits list of net elements to three lists:
