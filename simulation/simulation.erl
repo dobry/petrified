@@ -1,14 +1,34 @@
 -module(simulation).
--export([init/1, group_elements/1]).
+-export([init/1, build_simulation/1]).
 -include("net_records.hrl").
 
 init(List) ->
-  %io:format("TT~pTT~n", [List]),
-  {ok, Places, _Transitions, _Arcs} = group_elements(List),
+  spawn(simulation, build_simulation, [List]).
+
+build_simulation(List) ->
+  {ok, Places, Transitions, Arcs} = group_elements(List),
   %io:format("TT~pTT~n", [Res]),
   places:init(Places),
+  init_transitions(Transitions, Arcs),
   ok.
 
+%% create transitions processes first, then send to them info about arcs
+init_transitions(Transitions, Arcs) ->
+  transitions(Transitions),
+  arcs(Arcs).
+  
+transitions([]) ->
+  ok;
+transitions([Attributes | List]) ->
+  transition:init(Attributes),
+  transitions(List).
+
+arcs([]) ->
+  ok;
+arcs([H | Arcs]) ->
+  % send info to proper transitions
+  arcs(Arcs).
+  
 % splits list of net elements to three lists:
 % - Places
 % - Transitions
@@ -37,3 +57,4 @@ group_elements(Places, Transitions, Arcs, [{struct, Attributes} | List]) ->
         %  {ok, [], [], []}
       end
   end.
+

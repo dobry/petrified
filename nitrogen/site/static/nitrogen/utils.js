@@ -513,7 +513,6 @@ var utils = {
         name: this.name,
         x: toFixed(this.left, this.NUM_FRACTION_DIGITS),
         y: toFixed(this.top, this.NUM_FRACTION_DIGITS),
-        weight: this.weight,
         delay: this.delay,
         angle: toFixed(this.theta * 180, this.NUM_FRACTION_DIGITS)
       }
