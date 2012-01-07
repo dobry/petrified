@@ -9,7 +9,7 @@ main() -> #template { file = "./site/templates/petrinet.html" }.
 title() -> "Petri Nets".
 
 body() -> 
-  {Menu, Actions} = menu(net),
+  {Menu, Actions} = menu(edit),
   wf:wire(Actions),
   [
     #panel { id = "app", body = 
@@ -17,12 +17,6 @@ body() ->
       #panel { id = "menus", body = 
       [
         #panel { id = controls, body = "<p id=\"feedback\"><label id=\"feed\">(0, 0)</label></p>" },
-        #dropdown { id = menu_drop, postback = menu_select, options = 
-        [
-          #option { text = "Sieć", value = "net" },
-          #option { text = "Elementy", value = "elements" },
-          #option { text = "Właściwości", value = "properties" }
-        ]},
         #panel { id = menu_items, body = Menu }
       ]},
       
@@ -32,28 +26,16 @@ body() ->
   ].
 
 
-%%% various event handlers
-
-event(menu_select) ->
-  wf:wire(#script { script = "petri.menu.setSelected(\"button-cursor\");" }),
-  Menu_name = wf:q(menu_drop),
-  case menu(list_to_atom(Menu_name)) of
-    {Menu, Actions} ->
-      wf:update(menu_items, Menu),
-      wf:wire(Actions);
-    Menu ->
-      wf:update(menu_items, Menu)
-  end,
-  ChangeMenu = wf:f("petri.menu.change(\"~s\");", [Menu_name]),
-  io:format(ChangeMenu),
-  wf:wire(#script { script = ChangeMenu }),
-  ok;
+%%% event handlers
+  
 event(save_to_file) ->
   io:format("got save_to_file postback:~n"),
   Data = wf:q(save_to_file_data),
   Text = wf:f("~p~n", [Data]),
   
   Res = mochijson2:decode(Data),
+  %io:format("Data:~n~p~n", [Data]),
+  %io:format("Res:~n~p~n", [Res]),
   %Strings = printer:format(Res),
   
   case file:make_dir("./site/tmp/") of
@@ -122,16 +104,29 @@ finish_upload_event(_Tag, _FileName, LocalFileData, Node) ->
   ok.
 
 %% menu context generators
-menu(net) ->
+menu(edit) ->
   Menu = [
-    "Wczytaj z pliku",
-    #br {},
-    #upload { class = upload_field, tag = myUpload1, show_button = false },
-    #br {},
-    #button { text = "Zapisz do pliku", id = save_to_file },
-    #hidden { id = save_to_file_data },
-    #br {},#br {},
-    #button { text = "Wyczyść", id = new_net }
+    #panel { class = "menu", id = net, body = [
+      "<label class=\"menu_description\">Wczytaj z pliku</label>",
+      #br {},
+      #upload { class = upload_field, tag = myUpload1, show_button = false },
+      #br {},
+      #button { text = "Zapisz do pliku", id = save_to_file },
+      #hidden { id = save_to_file_data },
+      #br {},#br {},
+      #button { text = "Wyczyść", id = new_net }
+    ]},
+    #panel { class = "menu", id = elements, body = [
+      "<label class=\"menu_description\">Aby dodać element zaznacz, a następnie kliknij w polu edytora.</label>
+      <ol id=\"selectable\">
+	      <li class=\"selected\" title=\"button-cursor\"><img alt=\"cursor\" src=\"images/cursor.png\" /></li>
+	      <li title=\"button-delete\"><img alt=\"delete\" src=\"images/delete.png\" /></li>
+	      <li title=\"button-transition\"><img alt=\"transition\" src=\"images/transition.png\" /></li>
+	      <li title=\"button-place\"><img alt=\"place\" src=\"images/place.png\" /></li>
+	      <li title=\"button-arc\"><img alt=\"arc\" src=\"images/arc.png\" /></li>
+	      <li title=\"button-marker\"><img alt=\"marker\" src=\"images/marker.png\" /></li>
+      </ol>"
+    ]}
   ],
   ToJSON = wf:f("petri.toJSON();"),
   Actions = 
@@ -141,25 +136,13 @@ menu(net) ->
     [
       #script { script = ToJSON },
       #event { postback = save_to_file }
-    ]}
+    ]},
+    #script { script = "utils.selectable();" }
   ],
   {Menu, Actions};
-menu(elements) ->
-  Menu = [
-    "<label class=\"menu_description\">Aby dodać element zaznacz, a następnie kliknij w polu edytora.</label>",
-    "<ol id=\"selectable\">
-	    <li class=\"selected\" title=\"button-cursor\"><img alt=\"cursor\" src=\"images/cursor.png\" /></li>
-	    <li title=\"button-delete\"><img alt=\"delete\" src=\"images/delete.png\" /></li>
-	    <li title=\"button-transition\"><img alt=\"transition\" src=\"images/transition.png\" /></div></li>
-	    <li title=\"button-place\"><img alt=\"place\" src=\"images/place.png\" /></li>
-	    <li title=\"button-arc\"><img alt=\"arc\" src=\"images/arc.png\" /></li>
-	    <li title=\"button-marker\"><img alt=\"marker\" src=\"images/marker.png\" /></li>
-    </ol>"
-  ],
-  {Menu, #script { script = "utils.selectable();" }};
 menu(properties) ->
-  Menu = [
-    "<label class=\"menu_description\">Właściwości zaznaczonego elementu.</label>",
-    "<div id=\"element_properties\"> </div>"
-  ],
-  Menu.
+  #panel { class = "menu", id = properties, body = [
+    "<label class=\"menu_description\">Właściwości:</label>",
+    #panel { id = element_properties, body = []}
+    %<div id=\"element_properties\"> </div>"
+  ]}.

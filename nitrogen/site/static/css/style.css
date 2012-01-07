@@ -82,9 +82,15 @@ a:hover, a:active {
   float: right;
   width: 200px;
   margin: 0;
-  padding: 5px;
+  padding: 0px;
   color: #fff;
   font-family: sans-serif;
+}
+
+.menu {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding: 10px;
 }
 
 #canvas {
