@@ -104,11 +104,13 @@ var utils = {
         return {
           element: this.arrow.type,
           id: this.arrow.id,
+          fromType: this.belongsTo ? this.belongsTo.type : 'undefined',
           name: this.arrow.name,
-          from: this.belongsTo ? this.belongsTo.name : 'undefined',
-          to: this.arrow.to.belongsTo ? this.arrow.to.belongsTo.name : 'undefined',
           fromId: this.belongsTo ? this.belongsTo.id : 'undefined',
-          toId: this.arrow.to.belongsTo ? this.arrow.to.belongsTo.id : 'undefined'
+          toId: this.arrow.to.belongsTo ? this.arrow.to.belongsTo.id : 'undefined',
+          weight: this.weight || 1,
+          from: this.belongsTo ? this.belongsTo.name : 'undefined',
+          to: this.arrow.to.belongsTo ? this.arrow.to.belongsTo.name : 'undefined'
         };
       }
       else return {};

@@ -14,20 +14,35 @@ build_simulation(List) ->
 
 %% create transitions processes first, then send to them info about arcs
 init_transitions(Transitions, Arcs) ->
-  transitions(Transitions),
-  arcs(Arcs).
+  {ok, Pids} = transitions(Transitions, []),
+  arcs(Arcs, Pids).
   
-transitions([]) ->
-  ok;
-transitions([Attributes | List]) ->
-  transition:init(Attributes),
-  transitions(List).
+transitions([], Pids) ->
+  {ok, Pids};
+transitions([Attributes | List], Pids) ->
+  Pid = transition:init(Attributes),
+  transitions(List, [Pid | Pids]).
 
-arcs([]) ->
+arcs([], Pids) ->
+  lists:foreach(fun ({_Id, Pid}) -> Pid ! ready end, Pids),
   ok;
-arcs([H | Arcs]) ->
-  % send info to proper transitions
-  arcs(Arcs).
+arcs([H | Arcs], Pids) ->
+  [{<<"id">>, _Id} | [{<<"fromType">>, From_type} | [{<<"name">>, _N} | [{<<"fromId">>, From_id} | [{<<"toId">>, To_id} | [{<<"weight">>, W} | _Rest]]]]]] = H,
+  case From_type of
+    <<"transition">> ->
+      io:format("FromId:~p~nPids:~p~n", [From_id, Pids]),
+      {_Tr_id, Pid} = lists:keyfind(From_id, 1, Pids),
+      Pid ! {from, To_id, W};
+    <<"place">> ->
+      io:format("FromId:~p~nPids:~p~n", [From_id, Pids]),
+      {_Tr_id, Pid} = lists:keyfind(To_id, 1, Pids),
+      Pid ! {to, From_id, W}
+    %TODO: remove this after debugging
+    %Other ->
+    %  io:format("what? ~p~nwhat?~n", [Other])
+  end,
+  arcs(Arcs, Pids).
+
   
 % splits list of net elements to three lists:
 % - Places
