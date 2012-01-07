@@ -19,9 +19,10 @@ loop(Dict) ->
         {_Dict, false} ->
           Pid ! not_possible,
           loop(Dict)
-      end
-  end,
-  ok.
+      end;
+    stop ->
+      ok
+  end.
 
 create_dict(Elements_List) ->
   Map_fun = fun([{<<"id">>, Id} | Attr_List]) -> 
