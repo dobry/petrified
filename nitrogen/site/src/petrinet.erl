@@ -61,8 +61,10 @@ event(sim_build) ->
   io:format("sim_build event~n"),
   JSON = wf:q(net_data),
   List = mochijson2:decode(JSON),
-  io:format("~p~n", [List]),
-  simulation:init(List);
+  %io:format("~p~n", [JSON]),
+  %io:format("~p~n", [List]),
+  simulation:init(List),
+  ok;
 event(sim_play) ->
   io:format("sim_play event~n");
 event(sim_pause) ->

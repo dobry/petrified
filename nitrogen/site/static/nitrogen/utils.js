@@ -102,8 +102,8 @@ var utils = {
       if (this.end === 'from')
       {
         return {
-          id: this.arrow.id,
           element: this.arrow.type,
+          id: this.arrow.id,
           name: this.arrow.name,
           from: this.belongsTo ? this.belongsTo.name : 'undefined',
           to: this.arrow.to.belongsTo ? this.arrow.to.belongsTo.name : 'undefined'
@@ -392,8 +392,8 @@ var utils = {
     {
       //console.log(this);
       return {
-        id: this.id,
         element: this.type,
+        id: this.id,
         name: this.name,
         x: toFixed(this.left, this.NUM_FRACTION_DIGITS),
         y: toFixed(this.top, this.NUM_FRACTION_DIGITS),
@@ -504,8 +504,8 @@ var utils = {
       //console.log("trans.angle", this.theta, this.angle, toFixed(this.angle * 180, this.NUM_FRACTION_DIGITS));
       //console.log(this);
       return {
-        id: this.id,
         element: this.type,
+        id: this.id,
         name: this.name,
         x: toFixed(this.left, this.NUM_FRACTION_DIGITS),
         y: toFixed(this.top, this.NUM_FRACTION_DIGITS),
