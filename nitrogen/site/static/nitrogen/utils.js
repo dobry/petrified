@@ -106,7 +106,9 @@ var utils = {
           id: this.arrow.id,
           name: this.arrow.name,
           from: this.belongsTo ? this.belongsTo.name : 'undefined',
-          to: this.arrow.to.belongsTo ? this.arrow.to.belongsTo.name : 'undefined'
+          to: this.arrow.to.belongsTo ? this.arrow.to.belongsTo.name : 'undefined',
+          fromId: this.belongsTo ? this.belongsTo.id : 'undefined',
+          toId: this.arrow.to.belongsTo ? this.arrow.to.belongsTo.id : 'undefined'
         };
       }
       else return {};
