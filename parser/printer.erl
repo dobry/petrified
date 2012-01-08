@@ -16,7 +16,9 @@ print(_Device, []) ->
 struct([], undefined, []) ->
   no_element;
 struct([Attr | List], Element, AttrStrings) ->
-  case attr(Attr) of
+  case desirable(Attr) of
+    false ->
+      struct(List, Element, AttrStrings);
     {element, NewElement} ->
       struct(List, NewElement, AttrStrings);
     AttrString ->
@@ -51,3 +53,22 @@ printAttr(Device, [Attr | Attrs]) ->
   printAttr(Device, Attrs);
 printAttr(_, []) ->
   ok.
+
+desirable({Name, Value}) ->
+  List = [
+    <<"x">>,
+    <<"y">>,
+    <<"name">>,
+    <<"weight">>,
+    <<"priority">>,
+    <<"to">>,
+    <<"from">>,
+    <<"markers">>,
+    <<"delay">>,
+    <<"angle">>,
+    <<"element">>
+  ],
+  case lists:any(fun (El) -> Name == El end, List) of
+    true -> attr({Name, Value});
+    _ -> false
+  end.
