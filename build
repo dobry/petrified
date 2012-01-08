@@ -1,0 +1,6 @@
+#!/bin/bash
+	cd simulation
+	make
+	cd ../parser
+	make
+	cd ..
