@@ -318,6 +318,31 @@ net.net_constructor = function (obj)
   { 
     var i;
     
+    // sort to make sure that places and transitions will be added before arcs, otherwise relations could be broken
+    var sf = function(a, b)
+    {
+      if (a.element === "place" || a.element === "transition")
+      {
+        if (b.element === "place" || b.element === "transition")
+        {
+          return 0;
+        }
+        else
+        {
+          return -1;
+        }
+      }
+      else if (b.element === "arc")
+      {
+        return 0;
+      }
+      else
+      {
+        return 1;
+      }
+    };
+    ele_array.sort(sf);
+
     canvas.items = [];
     for (i = 0; i < ele_array.length; i++)
     {

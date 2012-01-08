@@ -23,7 +23,7 @@ place
   markers 0
   y 156
   x 570
-  name place2
+  name place1
 end
 transition
   angle 0
@@ -35,7 +35,7 @@ transition
 end
 arc
   to transition1
-  from place2
+  from place1
   weight 1
   name arc2
 end
@@ -46,7 +46,7 @@ arc
   name arc4
 end
 arc
-  to place2
+  to place1
   from transition3
   weight 1
   name arc6
