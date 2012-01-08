@@ -66,11 +66,14 @@ event(sim_build) ->
   simulation:init(List),
   ok;
 event(sim_play) ->
-  io:format("sim_play event~n");
+  %io:format("sim_play event~n"),
+  simulation:play();
 event(sim_pause) ->
-  io:format("sim_pause event~n");
+  %io:format("sim_pause event~n"),
+  simulation:pause();
 event(sim_stop) ->
-  io:format("sim_stop event~n").
+  %io:format("sim_stop event~n"),
+  simulation:stop().
 
 drop_event(Drag_tag, canvas_drop) ->
   % execute js script with data

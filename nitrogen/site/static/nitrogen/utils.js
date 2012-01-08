@@ -247,7 +247,7 @@ var utils = {
       this.from.arrow = this;
       this.to = options.to;
       this.to.arrow = this;
-      
+      this.weight = options.weight || 1;
       
       this.top = this.from.top;
       this.left = this.from.left;
@@ -478,7 +478,7 @@ var utils = {
       this.beta = options.beta;
       this.angle = this.beta * Math.PI / 180;
       this.theta = this.beta / 180;
-      this.weight = options.weight;
+      this.priority = options.priority || 1;
       this.delay = options.delay;
       this.set('radius', options.radius || 0);      
       this.mR = options.mR;
@@ -516,6 +516,7 @@ var utils = {
         x: toFixed(this.left, this.NUM_FRACTION_DIGITS),
         y: toFixed(this.top, this.NUM_FRACTION_DIGITS),
         delay: this.delay,
+        priority: this.priority || 1,
         angle: toFixed(this.theta * 180, this.NUM_FRACTION_DIGITS)
       }
     },    

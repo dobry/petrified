@@ -1,21 +1,42 @@
 -module(simulation).
--export([init/1, build_simulation/1]).
+-export([init/1, play/0, pause/0, stop/0]).
+-export([build_simulation/1]).
 -include("net_records.hrl").
 
 init(List) ->
-  spawn(simulation, build_simulation, [List]).
+  register(simulation, spawn(simulation, build_simulation, [List])).
 
 build_simulation(List) ->
   {ok, Places, Transitions, Arcs} = group_elements(List),
   %io:format("TT~pTT~n", [Res]),
   places:init(Places),
-  init_transitions(Transitions, Arcs),
-  ok.
+  Pids = init_transitions(Transitions, Arcs),
+  % init supervisor with Pids
+  io:format("sim: ready~n"),
+  loop(Pids).
+
+loop(Pids) ->
+  receive
+    play ->
+      io:format("sim: play~n"),
+      lists:foreach(fun ({_ID, Pid, _Priority}) -> Pid ! play end, Pids),
+      loop(Pids);
+    pause ->
+      io:format("sim: pause~n"),
+      lists:foreach(fun ({_ID, Pid, _Priority}) -> Pid ! pause end, Pids),
+      loop(Pids);
+    stop ->
+      io:format("sim: stop~n"),
+      lists:foreach(fun ({_ID, Pid, _Priority}) -> Pid ! stop end, Pids),
+      places ! stop
+  end.
+
 
 %% create transitions processes first, then send to them info about arcs
 init_transitions(Transitions, Arcs) ->
   {ok, Pids} = transitions(Transitions, []),
-  arcs(Arcs, Pids).
+  arcs(Arcs, Pids),
+  Pids.
   
 transitions([], Pids) ->
   {ok, Pids};
@@ -24,18 +45,18 @@ transitions([Attributes | List], Pids) ->
   transitions(List, [Pid | Pids]).
 
 arcs([], Pids) ->
-  lists:foreach(fun ({_Id, Pid}) -> Pid ! ready end, Pids),
+  lists:foreach(fun ({_Id, Pid, _Priority}) -> Pid ! ready end, Pids),
   ok;
 arcs([H | Arcs], Pids) ->
   [{<<"id">>, _Id} | [{<<"fromType">>, From_type} | [{<<"name">>, _N} | [{<<"fromId">>, From_id} | [{<<"toId">>, To_id} | [{<<"weight">>, W} | _Rest]]]]]] = H,
   case From_type of
     <<"transition">> ->
-      io:format("FromId:~p~nPids:~p~n", [From_id, Pids]),
-      {_Tr_id, Pid} = lists:keyfind(From_id, 1, Pids),
+      %io:format("FromId:~p~nPids:~p~n", [From_id, Pids]),
+      {_Tr_id, Pid, _Priority} = lists:keyfind(From_id, 1, Pids),
       Pid ! {from, To_id, W};
     <<"place">> ->
-      io:format("FromId:~p~nPids:~p~n", [From_id, Pids]),
-      {_Tr_id, Pid} = lists:keyfind(To_id, 1, Pids),
+      %io:format("FromId:~p~nPids:~p~n", [From_id, Pids]),
+      {_Tr_id, Pid, _Priority} = lists:keyfind(To_id, 1, Pids),
       Pid ! {to, From_id, W}
     %TODO: remove this after debugging
     %Other ->
@@ -72,4 +93,16 @@ group_elements(Places, Transitions, Arcs, [{struct, Attributes} | List]) ->
         %  {ok, [], [], []}
       end
   end.
+
+
+%%% interface
+
+play() ->
+  simulation ! play.
+
+pause() ->
+  simulation ! pause.
+
+stop() ->
+  simulation ! stop.
 

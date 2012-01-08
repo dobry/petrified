@@ -11,15 +11,11 @@ init(Places_List) ->
 loop(Dict) ->
   receive
     {check, Places, Pid} ->
-      case lists:foldl(fun(E, Acc) -> check_place(E, Acc) end, {Dict, true}, Places) of %fun(E, Acc) -> check_places(E, Acc) end
-        {_Dict, true} ->
-          New_dict = lists:foldl(fun(E, Acc) -> update_place(E, Acc) end, Dict, Places),
-          Pid ! ok_launch,
-          loop(New_dict);
-        {_Dict, false} ->
-          Pid ! not_possible,
-          loop(Dict)
-      end;
+      io:format("places: checking ~p~n", [Pid]),
+      {Response, New_dict} = check_places(Dict, Places),
+      io:format("places: checked ~p, response ~p~n", [Pid, Response]),
+      Pid ! Response,
+      loop(New_dict);
     stop ->
       ok
   end.
@@ -39,22 +35,32 @@ create_dict(Elements_List) ->
   dict:from_list(KV).
 
 
+check_places(Dict, Places) ->
+  case lists:foldl(fun(E, Acc) -> check_place(E, Acc) end, {Dict, true}, Places) of
+    {_Dict, true} ->
+      {ok_launched, lists:foldl(fun(E, Acc) -> update_place(E, Acc) end, Dict, Places)};
+    {_Dict, false} ->
+      {not_possible, Dict}
+  end.
+
+
 %%% helpers for lists:foldl()
 
 update_place({Id, Demand}, Dict) ->
-  dict:update(Id, fun (P) ->
-                    P#place{markers = P#place.markers - Demand}
-                  end, Dict).
+  dict:update(Id, fun (P) -> P#place{markers = P#place.markers + Demand} end, Dict).
 
 check_place(_E, {Dict, false}) ->
   {Dict, false};
 check_place({Id, Demand}, {Dict, true}) -> 
   Val = dict:fetch(Id, Dict),
+  State = Val#place.markers + Demand,
+  Bool = (State =< 0) or (State >= Val#place.capacity),
+  %io:format("Place: ~p, Demant: ~p, State: ~p, Bool: ~p~n",[Val, Demand, State, Bool]),
   if 
-    Val#place.markers < Demand ->
-      {Dict, false};
+    Bool ->
+      {Dict, true};
     true -> % else
-      {Dict, true}
+      {Dict, false}
   end.
     
 
