@@ -13,7 +13,7 @@ end # brak tagu zakończenia miejsca
 transition
   angle 567.42
   delay 1.504
-  weight 1
+  priority 1
   y 44
   x 252
   name t0
@@ -21,7 +21,7 @@ end
 transition
   angle 0
   delay 1.1
-  weight 3
+  priority 3
   y 219
   x 225
   name t1
@@ -29,7 +29,7 @@ end
 transition
   angle 279.01
   delay 2.5
-  weight 2
+  priority 2
   y 200
   x 100
   name t2
@@ -37,7 +37,7 @@ end
 transition
   angle 288.6
   delay 1
-  weight 1
+  priority 1
   y 189
   x 691
   name transition100

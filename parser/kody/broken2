@@ -13,7 +13,7 @@ place
 transition
   angle 0
   delay 1.504
-  weight 1
+  priority 1
   y 44
   x 252
   name t0

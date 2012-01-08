@@ -13,7 +13,7 @@ end
 transition
   angle 0
   delay 1.504
-  weight 1
+  priority 1
   y 44
   x 252
   name t0
@@ -21,7 +21,7 @@ end
 transition
   angle 0
   delay 1.1
-  weight 3
+  priority 3
   y 293
   x 308
   name t1
@@ -29,7 +29,7 @@ end
 transition
   angle 278.59
   delay 2.5
-  weight 2
+  priority 2
   y 200
   x 100
   name t2
@@ -38,26 +38,30 @@ arc
   to t0
   from p0
   name a0
+  weight 1
 end
 arc
   to p2
   from t1
   name a3
+  weight 1
 end
 arc
   to t2
   from p2
   name a4
+  weight 1
 end
 arc
   to p0
   from t2
   name a5
+  weight 1
 end
 transition
   angle 215.13
   delay 1
-  weight 1
+  priority 1
   y 188
   x 606
   name transition0
@@ -72,6 +76,7 @@ arc
   to p0
   from t1
   name arc3
+  weight 4
 end
 place
   markers 0
@@ -83,27 +88,29 @@ arc
   to place0
   from t0
   name a1
+  weight 1
 end
 arc
   to place0
   from transition0
   name arc1
+  weight 1
 end
 arc
   to t0
   from place0
   name arc0
+  weight 3
 end
 arc
   to transition0
   from place0
   name arc2
+  weight 2
 end
 arc
   to t1
   from place0
   name arc2
+  weight 1
 end
-
-
-

@@ -261,7 +261,7 @@ net.net_constructor = function (obj)
       element: obj.element,
       name: identity.name,
       beta: obj.angle || 0,
-      weight: obj.weight || 1,
+      priority: obj.priority || 1,
       delay: obj.delay || 1
     });
     return ele;
@@ -298,9 +298,16 @@ net.net_constructor = function (obj)
       p2 = new fabric.ArrowPoint({ left: mousePos.x + 20, top: mousePos.y + 20, end: 'to' });
     }
     
-    
     // create arrow and its handles
-    arrow = new fabric.Arrow({ id: identity.id, strokeWidth: that.strokeWidth, from: p1, to: p2, element: obj.element, name: identity.name });
+    arrow = new fabric.Arrow({
+      id: identity.id,
+      strokeWidth: that.strokeWidth,
+      from: p1,
+      to: p2,
+      element: obj.element,
+      weight: obj.weight || 1,
+      name: identity.name
+    });
     
     return [p1, p2];//, arrow];
   };

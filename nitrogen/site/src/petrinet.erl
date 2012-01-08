@@ -76,7 +76,7 @@ drop_event(Drag_tag, canvas_drop) ->
   % execute js script with data
   Script = wf:f("petri.drop(\"~p\");", [Drag_tag]),
   wf:wire(#script { script = Script }),
-  io:format("lauched js script:~n~s~n", [Script]),
+  % io:format("lauched js script:~n~s~n", [Script]),
   ok.
 
 start_upload_event(myUpload1) ->
@@ -94,7 +94,8 @@ finish_upload_event(_Tag, _FileName, LocalFileData, Node) ->
   % prepare net data
   case scanner:tokenize(LocalFileData) of
     {error, Line_number, Reason} ->
-      NewFeed = wf:f("Error: Line:~p Reason:~p", [Line_number, Reason]),
+      NewFeed = wf:f("Error: Line:~p Reason:~s", [Line_number, Reason]),
+      io:format("Error: Line:~p Reason:~s", [Line_number, Reason]),
       wf:update(feed, NewFeed);
     Scanned ->
       % new parser
