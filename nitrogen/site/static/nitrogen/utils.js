@@ -313,7 +313,7 @@ var utils = {
       this.element = options.element;
       this.name = options.name;
       this.id = options.id;
-      this.capacity = options.capacity || -1;
+      this.capacity = options.capacity || 'inf';
     },
     
     

@@ -234,6 +234,7 @@ net.net_constructor = function (obj)
       fill: fill, 
       top: obj.y, 
       left: obj.x,
+      capacity: obj.capacity || 'inf',
       name: identity.name,
       mR: mR,
       element: obj.element
