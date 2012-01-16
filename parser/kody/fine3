@@ -7,7 +7,7 @@ transition
   name transition1
 end
 place
-  capacity inf
+  capacity 1000
   markers 1
   y 206
   x 944
@@ -20,6 +20,7 @@ arc
   name arc1
 end
 place
+  capacity 7
   markers 0
   y 156
   x 570

@@ -285,8 +285,7 @@ var utils = {
       return this.width < 0 ? 3* Math.PI + angle + Math.PI/2 : angle + Math.PI/2;
     }
   }); //-----------end of fabric.Arrow---------
-  
-  
+
   fabric.Place = fabric.util.createClass(fabric.Object, {
     
     type: 'place',
@@ -330,9 +329,37 @@ var utils = {
       if (this.stroke) {
         ctx.stroke();
       }
+      this._renderCapacity(ctx);
       this._renderMarkers(ctx);
     },
     
+    _renderCapacity: function (ctx)
+    {
+      console.log("in _renderCapacity; capacity: ", this.capacity);
+      var width, height = 12, measure, padding = 1;
+      if (this.capacity !== 'inf')
+      {
+        ctx.save();
+        ctx.translate(-this.width/2, this.height/2);
+
+        // calculate and print frame
+        measure = ctx.measureText(this.capacity);
+        width = measure.width;
+        console.log("capacity width: ", width);
+        ctx.fillStyle = 'white';
+        ctx.strokeStyle = 'black';//this.stroke;
+        ctx.lineWidth = 0.7;
+        ctx.fillRect(-padding, -height + padding, width + 2 * padding, height + 2 * padding);
+        ctx.strokeRect(-padding, -height + padding, width + 2 * padding, height + 2 * padding);
+        
+        // print capacity
+        ctx.fillStyle = 'black';
+        ctx.font = height + 'px "Tahoma" bold';
+        ctx.fillText(this.capacity, 0, 0);
+        ctx.restore();
+      }
+    },
+
     _renderMarkers: function(ctx)
     {
       var i, pos,
@@ -404,7 +431,7 @@ var utils = {
         y: toFixed(this.top, this.NUM_FRACTION_DIGITS),
         markers: this.markers,
         capacity: this.capacity
-      }
+      };
     },
     
     add: function (ele)
@@ -433,7 +460,6 @@ var utils = {
       var i;
       if (prop === 'top')
       {
-        var i;
         for (i = 0; i < this.points.length; i++)
         {
           //console.log(val, this.points[i].top, this.top, val - this.top);
@@ -445,7 +471,6 @@ var utils = {
       else if (prop === 'left')
       {
         //console.log(this.points);
-        var i;
         for (i = 0; i < this.points.length; i++)
         {
           this.points[i].move(prop, val - this.left);
@@ -544,7 +569,6 @@ var utils = {
       var i;
       if (prop === 'top')
       {
-        var i;
         for (i = 0; i < this.points.length; i++)
         {
           console.log(val, this.points[i].top, this.top, val - this.top);
@@ -556,7 +580,6 @@ var utils = {
       else if (prop === 'left')
       {
         //console.log(this.points);
-        var i;
         for (i = 0; i < this.points.length; i++)
         {
           this.points[i].move(prop, val - this.left);
