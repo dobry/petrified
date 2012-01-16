@@ -261,6 +261,7 @@ net.net_constructor = function (obj)
       stroke: stroke, 
       fill: fill,
       height: 12,
+      border: true,
       ctx: that.canvas.getContext()
     });
 
@@ -290,7 +291,7 @@ net.net_constructor = function (obj)
   that.constructors['arc'] = function (obj)
   {
     //console.log("construct arc", obj);
-    var p1, p2, arrow, from, to, owner;
+    var p1, p2, arrow, from, to, owner, weight;
     var identity = genIdentity(obj);
     
     // init grip point with its owner if exist or coords from mouse
@@ -317,15 +318,27 @@ net.net_constructor = function (obj)
       p2 = new fabric.ArrowPoint({ left: mousePos.x + 20, top: mousePos.y + 20, end: 'to' });
     }
     
+    weight = new fabric.Property({
+      left: 0,
+      top: 0,
+      value: obj.weight || 1, 
+      stroke: stroke,
+      fill: fill,
+      height: 12,
+      ctx: that.canvas.getContext()
+    });
+    
     // create arrow and its handles
     arrow = new fabric.Arrow({
       id: identity.id,
       strokeWidth: that.strokeWidth,
       from: p1,
       to: p2,
+      border: false, 
       element: obj.element,
       weight: obj.weight || 1,
-      name: identity.name
+      name: identity.name,
+      weightDisplay: weight
     });
     
     return [p1, p2];//, arrow];

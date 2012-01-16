@@ -274,6 +274,7 @@ var utils = {
       this.height = this.to.top - this.from.top;
  
       this.strokeWidth = options.strokeWidth;
+      this.weightDisplay = options.weightDisplay;
       this.element = options.element;
       this.name = options.name;
       this.id = options.id;
@@ -288,6 +289,12 @@ var utils = {
       ctx.moveTo(0,0);
       ctx.lineTo(this.width, this.height);
       ctx.stroke();
+      if (this.weight > 1)
+      {
+        ctx.translate(this.width/2, this.height/2);
+        this.weightDisplay.render(ctx);
+        ctx.translate(-this.width/2, -this.height/2);
+      }
       ctx.translate(this.width, this.height);
       ctx.rotate(this._calcAngle());
       ctx.beginPath();
