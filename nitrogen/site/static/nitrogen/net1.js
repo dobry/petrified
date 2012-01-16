@@ -6,6 +6,7 @@ net.net_constructor = function (obj)
 
 /*--private-vars--------------------------------------------------------------*/
   var that = {},
+    simulationSpeed = 1000, //time of transition in ms
     canvas,
     style = "#000", // all elements color
     stroke = '#333',
@@ -395,19 +396,31 @@ net.net_constructor = function (obj)
   that.findByName = function (name)
   {
     var i, array = canvas.getObjects();
-    //console.log("find by name", name);
     for (i = 0; i < array.length; i++)
     {
-    //console.log("find", array[1]);        
       if (array[i].name === name)
       {
-    //console.log("find if inside", array[1]);        
         return array[i];
       }
     }
     return undefined;
   };
 
+  that.findBy = function (attribute, value)
+  {
+    var i, array = canvas.getObjects();
+    for (i = 0; i < array.length; i++)
+    {
+      //console.log(attribute, (array[i])[attribute]);
+      //console.log((array[i])[attribute], value);
+      if ((array[i])[attribute] === value)
+      {
+        return array[i];
+      }
+    }
+    return undefined;
+  };
+  
   that.get = function (i)
   {
     return canvas.item(i);
@@ -415,7 +428,6 @@ net.net_constructor = function (obj)
   
   that.add = function (proto)
   {
-    //console.log(proto);
     var ele = that.constructors[proto.element](proto);
     if (utils.is_array(ele))
     {
@@ -500,6 +512,54 @@ net.net_constructor = function (obj)
   that.menu.change = function (Name)
   {
     that.menu.selectedMenu = Name;
+  };
+  
+  // --------------------simulation-------------------------------------------
+
+  that.happenings = {};
+  
+  // id - id of transition to launch
+  // places - list of places with amounts of markers to move after launching  
+  that.scheduleTransition = function (data)
+  {
+    var handle,
+      transition = that.findBy('id', data.id);
+
+    //console.log(canvas.getObjects());
+    console.log(transition);
+    transition.set('stroke', 'red');
+    canvas.renderAll();
+    //console.log('that.launchTransition(' + data.id + ')');
+    //setTimeout('console.log("where am I? ", this)', simulationSpeed);
+    handle = setTimeout(function ()
+                        {
+                          that.launchTransition(data.id)
+                        }, simulationSpeed);
+
+    that.happenings[data.id] = {
+      handle: handle,
+      transition: transition,
+      changes: data.changes
+    };
+  };
+  
+  that.launchTransition = function (id)
+  {
+    console.log("launchTransition: ", id);
+    var i, place,
+      hap = that.happenings[id],
+      ch = hap.changes,
+      length = hap.changes.length;
+
+    hap.transition.set('stroke', 'black');
+    console.log(hap);
+    for (i = 0; i < length; i++)
+    {
+      place = that.findBy('id', ch[i].id);
+      console.log(place);
+      place.transfer(ch[i].amount);
+    }
+    canvas.renderAll();
   };
   
   return that;

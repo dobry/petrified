@@ -441,6 +441,11 @@ var utils = {
       this.markers++;
     },
     
+    transfer: function (amount)
+    {
+      this.markers = this.markers + amount;
+    },
+    
     returnPoints: function ()
     {
       return this.points;
