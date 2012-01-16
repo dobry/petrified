@@ -12,7 +12,10 @@ var utils = {
     for (var i = 0; i < elem.length; i++)
     {
       var classes = elem[i].className;
-      if (myclass.test(classes)) retnode.push(elem[i]);
+      if (myclass.test(classes))
+      {
+        retnode.push(elem[i]);
+      }
     }
     return retnode;
   },
@@ -113,7 +116,10 @@ var utils = {
           to: this.arrow.to.belongsTo ? this.arrow.to.belongsTo.name : 'undefined'
         };
       }
-      else return {};
+      else
+      {
+        return {};
+      }
     },
 /* BUG
   Strange behavior of arrow, when one of its points is selected in group select.
@@ -144,13 +150,19 @@ var utils = {
         {
           this.top = value;
           //if (this.arrow) console.log("setTo arr.height", value - this.arrow.from.left || 1, "top", this.top);
-          if (this.arrow) this.arrow.height = value - this.arrow.from.top || 1;
+          if (this.arrow)
+          {
+            this.arrow.height = value - this.arrow.from.top || 1;
+          }
         }
         else if (property === 'left')
         {
           this.left = value;
           //if (this.arrow) console.log("setTo arr.width", value - this.arrow.from.left || 1, "left", this.left);
-          if (this.arrow) this.arrow.width = value - this.arrow.from.left || 1;
+          if (this.arrow)
+          {
+            this.arrow.width = value - this.arrow.from.left || 1;
+          }
         }
         else {
           this[property] = value;
@@ -205,10 +217,17 @@ var utils = {
     get: function (prop)
     {
       if (prop === 'element')
+      {
         return this.arrow.element;
+      }
       else if (prop === 'name')
+      {
         return this.arrow.name;
-      else return this[prop];
+      }
+      else
+      {
+        return this[prop];
+      }
       
     },
     
@@ -335,7 +354,7 @@ var utils = {
     
     _renderCapacity: function (ctx)
     {
-      console.log("in _renderCapacity; capacity: ", this.capacity);
+      //console.log("in _renderCapacity; capacity: ", this.capacity);
       var width, height = 12, measure, padding = 1;
       if (this.capacity !== 'inf')
       {
@@ -345,7 +364,7 @@ var utils = {
         // calculate and print frame
         measure = ctx.measureText(this.capacity);
         width = measure.width;
-        console.log("capacity width: ", width);
+        //console.log("capacity width: ", width);
         ctx.fillStyle = 'white';
         ctx.strokeStyle = 'black';//this.stroke;
         ctx.lineWidth = 0.7;
@@ -484,7 +503,57 @@ var utils = {
     }
   }); // -----------end of fabric.Place----------
   
-
+  fabric.Priority = fabric.util.createClass(fabric.Object, {
+    
+    type: 'priority',
+    selectable: false,
+    
+    initialize: function (options)
+    {
+      options = options || {};
+      this.callSuper('initialize', options);
+      this.priority = options.priority || 1;
+      this.padding = 1;
+      this.ctx = options.ctx;
+      this.width = this.ctx.measureText(this.priority).width;
+      this.height = options.height;
+      //this.selectable = 'false';
+      //this.hasControls = 'false';
+      console.log("init Priority: ", this, options);
+      
+    },
+    
+    _render: function (ctx, noTransform)
+    {
+      //console.log("ahoj");
+      //console.log("in _renderPriority; priority: ", this.priority);
+      //var width, height = 12, measure, padding = 1;
+      if (this.priority > 1) // priority === 1 is default and we don't display that
+      {
+        ctx.fillStyle = 'white';
+        ctx.strokeStyle = this.stroke;
+        ctx.lineWidth = 0.7;
+        ctx.translate(-this.width/2, 0);
+        ctx.clearRect(-this.padding, -this.height + this.padding, this.width + 2 * this.padding, this.height + 2 * this.padding);
+        ctx.strokeRect(-this.padding, -this.height + this.padding, this.width + 2 * this.padding, this.height + 2 * this.padding);
+        ctx.fillStyle = this.stroke;
+        ctx.font = this.height + 'px "Tahoma" bold';
+        ctx.fillText(this.priority, 0, 0);
+      }
+    },
+    
+    set: function (prop, val)
+    {
+      //console.log(prop, val);
+      this[prop] = val;
+    },
+    
+    toJSON: function ()
+    {
+      return {};
+    }
+  }); // -----------end of fabric.Priority-------
+  
   fabric.Transition = fabric.util.createClass(fabric.Object, {
     
     type: 'transition',
@@ -496,14 +565,18 @@ var utils = {
     {
       //console.log("ahoj'", options);
       options = options || { };
+
+      //those attributes should be set before calling super.initialize() because it modifies them (uses this.set() method)
       this.points = [];
+      this.priorityDisplay = options.priorityDisplay;
+      
       this.callSuper('initialize', options);
 
-      console.log(options.beta);      
+      //console.log(options.beta);      
       this.beta = options.beta;
       this.angle = this.beta * Math.PI / 180;
       this.theta = this.beta / 180;
-      this.priority = options.priority || 1;
+      this.set('priority', options.priority || 1);
       this.delay = options.delay;
       this.set('radius', options.radius || 0);      
       this.mR = options.mR;
@@ -512,6 +585,7 @@ var utils = {
       this.element = options.element;
       this.name = options.name;
       this.id = options.id;
+      //console.log("init Transition: ", this);
     },
     
     
@@ -528,6 +602,7 @@ var utils = {
       if (this.stroke) {
         ctx.stroke();
       }
+      
     },
     
     toJSON: function ()
@@ -543,7 +618,7 @@ var utils = {
         delay: this.delay,
         priority: this.priority || 1,
         angle: toFixed(this.theta * 180, this.NUM_FRACTION_DIGITS)
-      }
+      };
     },    
     
     add: function (ele)
@@ -567,15 +642,22 @@ var utils = {
     set: function (prop, val)
     {
       var i;
-      if (prop === 'top')
+      if (prop === 'priority')
+      {
+        this.priorityDisplay.set(prop, val);
+        this.priority = val;
+      }
+      else if (prop === 'top')
       {
         for (i = 0; i < this.points.length; i++)
         {
-          console.log(val, this.points[i].top, this.top, val - this.top);
+          //console.log(val, this.points[i].top, this.top, val - this.top);
           this.points[i].move(prop, val - this.top);
           //console.log(val, this.points[i].top, this.top, val - this.top);
         }
+
         this.top = val;
+        this.priorityDisplay.set(prop, val);
       }
       else if (prop === 'left')
       {
@@ -585,6 +667,7 @@ var utils = {
           this.points[i].move(prop, val - this.left);
         }
         this.left = val;
+        this.priorityDisplay.set(prop, val);
       }
       else
       {

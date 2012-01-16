@@ -62,7 +62,7 @@ net.net_constructor = function (obj)
   
   function init ()
   {
-    canvas = new fabric.Canvas('canvas'),
+    canvas = new fabric.Canvas('canvas');
 
     // piggyback on `canvas.findTarget`, to fire "object:over" and "object:out" events
     canvas.findTarget = (function(originalFn) {
@@ -207,7 +207,7 @@ net.net_constructor = function (obj)
         }
       }
     });
-  };
+  }
  
 /*--public--------------------------------------------------------------------*/
 
@@ -247,8 +247,21 @@ net.net_constructor = function (obj)
   {
     //console.log("construct trans");
     //console.log(obj);
-    var identity = genIdentity(obj);
-    var ele = new fabric.Transition({
+    var identity, transition, priority;
+
+    identity = genIdentity(obj);
+    
+    priority = new fabric.Priority({
+      left: obj.x,
+      top: obj.y,
+      priority: obj.priority || 1, 
+      stroke: stroke, 
+      fill: fill,
+      height: 12,
+      ctx: that.canvas.getContext()
+    });
+
+    transition = new fabric.Transition({
       id: identity.id,
       strokeWidth: strokeWidth,
       left: obj.x,
@@ -263,22 +276,24 @@ net.net_constructor = function (obj)
       name: identity.name,
       beta: obj.angle || 0,
       priority: obj.priority || 1,
-      delay: obj.delay || 1
+      delay: obj.delay || 1,
+      priorityDisplay: priority
     });
-    return ele;
+    
+    return [transition, priority];
   };
 
   // arc constructor
   that.constructors['arc'] = function (obj)
   {
     //console.log("construct arc", obj);
-    var p1, p2, arrow, from, to;
+    var p1, p2, arrow, from, to, owner;
     var identity = genIdentity(obj);
     
     // init grip point with its owner if exist or coords from mouse
     if (obj.from)
     {
-      var owner = that.findByName(obj.from);
+      owner = that.findByName(obj.from);
       //console.log("aaaaa!", owner);
       p1 = new fabric.ArrowPoint({ belongsTo: owner, end: 'from' });
       //console.log("aaaaa!",p1, owner);
@@ -290,7 +305,7 @@ net.net_constructor = function (obj)
     //console.log("uuuuuu", obj.to);
     if (obj.to)
     {
-      var owner = that.findByName(obj.to);
+      owner = that.findByName(obj.to);
       p2 = new fabric.ArrowPoint({ belongsTo: owner, end: 'to' });
       //console.log("bbbb!",obj.to, p1, owner);
     }
@@ -348,6 +363,11 @@ net.net_constructor = function (obj)
     {
       that.add(ele_array[i]);
     }
+    /*var iterate = canvas.getObjects(), j;
+    for (j = 0; j < iterate.length; j++)
+    {
+      console.log(iterate[j]);
+    }*/
   };
   
   that.start = function (obj)
@@ -369,6 +389,7 @@ net.net_constructor = function (obj)
         return array[i];
       }
     }
+    return undefined;
   };
 
   that.get = function (i)
@@ -463,7 +484,7 @@ net.net_constructor = function (obj)
   that.menu.change = function (Name)
   {
     that.menu.selectedMenu = Name;
-  }
+  };
   
   return that;
-}; // end of function net_constructor
+} // end of function net_constructor
