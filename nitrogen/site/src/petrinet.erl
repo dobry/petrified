@@ -27,8 +27,6 @@ body() ->
 
 
 %%% event handlers
-%event(init_simulation) ->
-%  Data = wf:q(net_data),
 event(save_to_file) ->
   io:format("got save_to_file postback:~n"),
   Data = wf:q(net_data),
@@ -111,13 +109,16 @@ menu(edit) ->
       #button { text = "Zapisz do pliku", id = save_to_file },
       #button { text = "Wyczyść", id = new_net },
       #br {},#br {},
+      "<label class=\"menu_description\">Symulacja</label>",
+      #br {},
       #button { text = "build", id = sim_build },
       #button { text = "play", id = sim_play },
       #button { text = "pause", id = sim_pause },
       #button { text = "stop", id = sim_stop }
     ]},
     #panel { class = "menu", id = elements, body = [
-      "<label class=\"menu_description\">Aby dodać element zaznacz, a następnie kliknij w polu edytora.</label>
+      "<label class=\"menu_description\">Edycja</label><br />
+      <p>Aby dodać element zaznacz, a następnie kliknij w polu edytora.</p>
       <ol id=\"selectable\">
 	      <li class=\"selected\" title=\"button-cursor\"><img alt=\"cursor\" src=\"images/cursor.png\" /></li>
 	      <li title=\"button-delete\"><img alt=\"delete\" src=\"images/delete.png\" /></li>
