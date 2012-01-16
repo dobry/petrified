@@ -514,7 +514,7 @@ var utils = {
       this.ctx = options.ctx;
       this.width = this.ctx.measureText(this.value).width;
       this.height = options.height;
-      this.border = options.border || true;
+      this.border = options.border;
       this.theta = options.theta || 0;
       this.priority = options.priority || 1;
     },
@@ -528,7 +528,10 @@ var utils = {
       ctx.translate(-this.left, -this.top);
       ctx.rotate(-this.theta);
       ctx.clearRect(-this.padding, -this.height + this.padding, this.width + 2 * this.padding, this.height + 2 * this.padding);
-      ctx.strokeRect(-this.padding, -this.height + this.padding, this.width + 2 * this.padding, this.height + 2 * this.padding);
+      if (this.border === true)
+      {
+        ctx.strokeRect(-this.padding, -this.height + this.padding, this.width + 2 * this.padding, this.height + 2 * this.padding);
+      }
       ctx.fillStyle = this.stroke;
       ctx.font = this.height + 'px "Tahoma" bold';
       ctx.fillText(this.value, 0, 0);
