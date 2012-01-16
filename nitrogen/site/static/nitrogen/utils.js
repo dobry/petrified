@@ -590,6 +590,7 @@ var utils = {
       ctx.beginPath();
       ctx.globalAlpha *= this.opacity;
       ctx.strokeStyle = this.stroke;
+      ctx.lineWidth = this.lineWidth;
       ctx.fillStyle = this.fill;
       ctx.rect(-this.mR, -this.radius, this.mR * 2, this.height);
       ctx.closePath();
@@ -675,6 +676,31 @@ var utils = {
       else
       {
         this[prop] = val;
+      }
+    },
+    
+    //-------------------------------simulation---------------------------
+    start: function()
+    {
+      var i;
+      this.set('stroke', 'red');
+      this.set('lineWidth', 3.0);
+      for (i = 0; i < this.points.length; i++)
+      {
+        this.points[i].arrow.set('stroke', 'red');
+        this.points[i].arrow.set('lineWidth', 3.0);
+      }
+    },
+    
+    finish: function()
+    {
+      var i;
+      this.set('stroke', 'black');
+      this.set('lineWidth', 2.0);
+      for (i = 0; i < this.points.length; i++)
+      {
+        this.points[i].arrow.set('stroke', 'black');
+        this.points[i].arrow.set('lineWidth', 2.0);
       }
     }
   }); //-----------end of fabric.Transition---------

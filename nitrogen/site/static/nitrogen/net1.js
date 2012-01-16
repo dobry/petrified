@@ -527,7 +527,7 @@ net.net_constructor = function (obj)
 
     //console.log(canvas.getObjects());
     console.log(transition);
-    transition.set('stroke', 'red');
+    transition.start();
     canvas.renderAll();
     //console.log('that.launchTransition(' + data.id + ')');
     //setTimeout('console.log("where am I? ", this)', simulationSpeed);
@@ -551,7 +551,7 @@ net.net_constructor = function (obj)
       ch = hap.changes,
       length = hap.changes.length;
 
-    hap.transition.set('stroke', 'black');
+    hap.transition.finish();
     console.log(hap);
     for (i = 0; i < length; i++)
     {
