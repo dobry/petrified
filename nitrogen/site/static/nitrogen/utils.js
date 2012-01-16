@@ -503,56 +503,38 @@ var utils = {
     }
   }); // -----------end of fabric.Place----------
   
-  fabric.Priority = fabric.util.createClass(fabric.Object, {
-    
-    type: 'priority',
-    selectable: false,
+  fabric.Property = fabric.util.createClass(fabric.Object, {
     
     initialize: function (options)
     {
       options = options || {};
       this.callSuper('initialize', options);
-      this.priority = options.priority || 1;
-      this.padding = 1;
+      this.value = options.value;
+      this.padding = options.padding || 1;
       this.ctx = options.ctx;
-      this.width = this.ctx.measureText(this.priority).width;
+      this.width = this.ctx.measureText(this.value).width;
       this.height = options.height;
-      //this.selectable = 'false';
-      //this.hasControls = 'false';
-      console.log("init Priority: ", this, options);
-      
+      this.border = options.border || true;
+      this.theta = options.theta || 0;
+      this.priority = options.priority || 1;
     },
     
-    _render: function (ctx, noTransform)
+    render: function (ctx, noTransform)
     {
-      //console.log("ahoj");
-      //console.log("in _renderPriority; priority: ", this.priority);
-      //var width, height = 12, measure, padding = 1;
-      if (this.priority > 1) // priority === 1 is default and we don't display that
-      {
-        ctx.fillStyle = 'white';
-        ctx.strokeStyle = this.stroke;
-        ctx.lineWidth = 0.7;
-        ctx.translate(-this.width/2, 0);
-        ctx.clearRect(-this.padding, -this.height + this.padding, this.width + 2 * this.padding, this.height + 2 * this.padding);
-        ctx.strokeRect(-this.padding, -this.height + this.padding, this.width + 2 * this.padding, this.height + 2 * this.padding);
-        ctx.fillStyle = this.stroke;
-        ctx.font = this.height + 'px "Tahoma" bold';
-        ctx.fillText(this.priority, 0, 0);
-      }
-    },
-    
-    set: function (prop, val)
-    {
-      //console.log(prop, val);
-      this[prop] = val;
-    },
-    
-    toJSON: function ()
-    {
-      return {};
+      ctx.save();
+      ctx.fillStyle = 'white';
+      ctx.strokeStyle = this.stroke;
+      ctx.lineWidth = 0.7;
+      ctx.translate(-this.left, -this.top);
+      ctx.rotate(-this.theta);
+      ctx.clearRect(-this.padding, -this.height + this.padding, this.width + 2 * this.padding, this.height + 2 * this.padding);
+      ctx.strokeRect(-this.padding, -this.height + this.padding, this.width + 2 * this.padding, this.height + 2 * this.padding);
+      ctx.fillStyle = this.stroke;
+      ctx.font = this.height + 'px "Tahoma" bold';
+      ctx.fillText(this.value, 0, 0);
+      ctx.restore();
     }
-  }); // -----------end of fabric.Priority-------
+  }); // -----------end of fabric.Property-------
   
   fabric.Transition = fabric.util.createClass(fabric.Object, {
     
@@ -602,7 +584,10 @@ var utils = {
       if (this.stroke) {
         ctx.stroke();
       }
-      
+      if (this.priority > 1)
+      {
+        this.priorityDisplay.render(ctx);
+      }
     },
     
     toJSON: function ()
@@ -644,7 +629,7 @@ var utils = {
       var i;
       if (prop === 'priority')
       {
-        this.priorityDisplay.set(prop, val);
+        this.priorityDisplay.value = val;
         this.priority = val;
       }
       else if (prop === 'top')
@@ -657,7 +642,6 @@ var utils = {
         }
 
         this.top = val;
-        this.priorityDisplay.set(prop, val);
       }
       else if (prop === 'left')
       {
@@ -667,7 +651,11 @@ var utils = {
           this.points[i].move(prop, val - this.left);
         }
         this.left = val;
-        this.priorityDisplay.set(prop, val);
+      }
+      else if (prop === 'theta')
+      {
+        this.priorityDisplay.theta = val;
+        this.theta = val;
       }
       else
       {

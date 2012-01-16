@@ -251,10 +251,10 @@ net.net_constructor = function (obj)
 
     identity = genIdentity(obj);
     
-    priority = new fabric.Priority({
-      left: obj.x,
-      top: obj.y,
-      priority: obj.priority || 1, 
+    priority = new fabric.Property({
+      left: mR,
+      top: pR,
+      value: obj.priority || 1, 
       stroke: stroke, 
       fill: fill,
       height: 12,
@@ -280,7 +280,7 @@ net.net_constructor = function (obj)
       priorityDisplay: priority
     });
     
-    return [transition, priority];
+    return transition;
   };
 
   // arc constructor
@@ -373,7 +373,7 @@ net.net_constructor = function (obj)
   that.start = function (obj)
   {
     that.set(obj.elements);
-    that.renderAll;
+    //that.renderAll;
   };
 
   that.findByName = function (name)
@@ -487,4 +487,4 @@ net.net_constructor = function (obj)
   };
   
   return that;
-} // end of function net_constructor
+}; // end of function net_constructor
