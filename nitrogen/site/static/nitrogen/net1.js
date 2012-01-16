@@ -63,7 +63,10 @@ net.net_constructor = function (obj)
   function init ()
   {
     canvas = new fabric.Canvas('canvas');
-
+    
+    //disable group selection
+    canvas.selection = false;
+    
     // piggyback on `canvas.findTarget`, to fire "object:over" and "object:out" events
     canvas.findTarget = (function(originalFn) {
       return function() {
