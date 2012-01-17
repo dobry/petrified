@@ -211,6 +211,14 @@ net.net_constructor = function (obj)
         }
       }
     });
+    
+    // initiate simulation buttons
+    var buttons = utils.getElementsByClass("sim_button");
+    buttons[0].disabled = true;
+    buttons[1].disabled = true;
+    buttons[2].disabled = true;
+    buttons[3].disabled = true;
+    utils.getElementsByClass("wfid_sim_build")[0].disabled = false;
   }
  
 /*--public--------------------------------------------------------------------*/
@@ -519,12 +527,18 @@ net.net_constructor = function (obj)
   that.buttonBuild = function ()
   {
     console.log("buttonBuild");
-    var i, objs = canvas.getObjects();
+    var buttons, i, objs = canvas.getObjects();
     that.toJSON();
     for (i = 0; i < objs.length; i++)
     {
       objs[i].selectable = false;
     }
+    buttons = utils.getElementsByClass("sim_button");
+    buttons[0].disabled = false;
+    buttons[1].disabled = false;
+    buttons[2].disabled = false;
+    buttons[3].disabled = false;
+    utils.getElementsByClass("wfid_sim_build")[0].disabled = true;
   };
   
   that.buttonPlay = function ()
@@ -540,11 +554,17 @@ net.net_constructor = function (obj)
   that.buttonStop = function ()
   {
     console.log("buttonStop");
-    var i, objs = canvas.getObjects();
+    var buttons, i, objs = canvas.getObjects();
     for (i = 0; i < objs.length; i++)
     {
       objs[i].selectable = true;
     }
+    buttons = utils.getElementsByClass("sim_button");
+    buttons[0].disabled = true;
+    buttons[1].disabled = true;
+    buttons[2].disabled = true;
+    buttons[3].disabled = true;
+    utils.getElementsByClass("wfid_sim_build")[0].disabled = false;
   };
   // --------------------simulation-------------------------------------------
 

@@ -111,10 +111,10 @@ menu(edit) ->
       #br {},#br {},
       "<label class=\"menu_description\">Symulacja</label>",
       #br {},
-      #button { text = "build", id = sim_build },
-      #button { text = "play", id = sim_play },
-      #button { text = "pause", id = sim_pause },
-      #button { text = "stop", id = sim_stop }
+      #button { class = sim_button, text = "build", id = sim_build },
+      #button { class = sim_button, text = "play", id = sim_play },
+      #button { class = sim_button, text = "pause", id = sim_pause },
+      #button { class = sim_button, text = "stop", id = sim_stop }
     ]},
     #panel { class = "menu", id = elements, body = [
       "<label class=\"menu_description\">Edycja</label><br />
