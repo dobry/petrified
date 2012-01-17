@@ -139,22 +139,22 @@ menu(edit) ->
     #event { trigger = new_net, type = click, actions = #script { script = "petri.clean();" } },
     #event { trigger = sim_build, type = click, actions =
     [
-      #script { script = wf:f("petri.toJSON();") },
+      #script { script = wf:f("petri.buttonBuild();") },
       #event { postback = sim_build }
     ]},
     #event { trigger = sim_play, type = click, actions =
     [
-      %#script { script = wf:f("petri.toJSON();") },
+      #script { script = wf:f("petri.buttonPlay();") },
       #event { postback = sim_play }
     ]},
     #event { trigger = sim_pause, type = click, actions =
     [
-      %#script { script = wf:f("petri.toJSON();") },
+      #script { script = wf:f("petri.buttonPause();") },
       #event { postback = sim_pause }
     ]},
     #event { trigger = sim_stop, type = click, actions =
     [
-      %#script { script = wf:f("petri.toJSON();") },
+      #script { script = wf:f("petri.buttonStop();") },
       #event { postback = sim_stop }
     ]},
     #script { script = "utils.selectable();" }

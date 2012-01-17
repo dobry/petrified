@@ -491,6 +491,7 @@ net.net_constructor = function (obj)
     console.log("cleaned");
   };
   
+  //--------------------------buttons & menus--------------------------------
   that.menu = {};
   that.menu.selectedObject = "button-cursor";
   that.menu.selectedMenu = null;
@@ -514,6 +515,25 @@ net.net_constructor = function (obj)
     that.menu.selectedMenu = Name;
   };
   
+  that.buttonBuild = function ()
+  {
+    that.toJSON();
+  };
+  
+  that.buttonPlay = function ()
+  {
+  
+  };
+  
+  that.buttonPause = function ()
+  {
+  
+  };
+  
+  that.buttonStop = function ()
+  {
+  
+  };
   // --------------------simulation-------------------------------------------
 
   that.happenings = {};
