@@ -603,6 +603,7 @@ net.net_constructor = function (obj)
       ch = hap.changes,
       length = hap.changes.length;
 
+    that.happenings[id] = undefined;
     hap.transition.finish();
     console.log(hap);
     for (i = 0; i < length; i++)
