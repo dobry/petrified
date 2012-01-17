@@ -515,9 +515,16 @@ net.net_constructor = function (obj)
     that.menu.selectedMenu = Name;
   };
   
+  
   that.buttonBuild = function ()
   {
+    console.log("buttonBuild");
+    var i, objs = canvas.getObjects();
     that.toJSON();
+    for (i = 0; i < objs.length; i++)
+    {
+      objs[i].selectable = false;
+    }
   };
   
   that.buttonPlay = function ()
@@ -532,7 +539,12 @@ net.net_constructor = function (obj)
   
   that.buttonStop = function ()
   {
-  
+    console.log("buttonStop");
+    var i, objs = canvas.getObjects();
+    for (i = 0; i < objs.length; i++)
+    {
+      objs[i].selectable = true;
+    }
   };
   // --------------------simulation-------------------------------------------
 
