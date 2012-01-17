@@ -526,7 +526,6 @@ net.net_constructor = function (obj)
   
   that.buttonBuild = function ()
   {
-    console.log("buttonBuild");
     var buttons, i, objs = canvas.getObjects();
     that.toJSON();
     for (i = 0; i < objs.length; i++)
@@ -553,8 +552,7 @@ net.net_constructor = function (obj)
   
   that.buttonStop = function ()
   {
-    console.log("buttonStop");
-    var buttons, i, objs = canvas.getObjects();
+    var keys, buttons, i, objs = canvas.getObjects();
     for (i = 0; i < objs.length; i++)
     {
       objs[i].selectable = true;
@@ -564,7 +562,14 @@ net.net_constructor = function (obj)
     buttons[1].disabled = true;
     buttons[2].disabled = true;
     buttons[3].disabled = true;
-    utils.getElementsByClass("wfid_sim_build")[0].disabled = false;
+    utils.getElementsByClass("wfid_sim_build")[0].disabled = false;    
+    
+    // every element of happenings obj should be cleared here with clearTimeout()
+    /*keys = happenings.keys();
+    for (i = 0; i < keys.length; i++)
+    {
+      clearTimeout(happenings[keys[i]].handle);
+    }*/
   };
   // --------------------simulation-------------------------------------------
 
