@@ -573,15 +573,16 @@ net.net_constructor = function (obj)
 
   that.happenings = {};
   
-  // id - id of transition to launch
-  // places - list of places with amounts of markers to move after launching  
+  // data.id - id of transition to launch
+  // data.changes - list of places with amounts of markers to move after launching  
   that.scheduleTransition = function (data)
   {
+    alert(data);
     var handle,
       transition = that.findBy('id', data.id);
 
     //console.log(canvas.getObjects());
-    console.log(transition);
+    //console.log(transition);
     transition.start();
     canvas.renderAll();
     //console.log('that.launchTransition(' + data.id + ')');

@@ -155,3 +155,8 @@ menu(properties) ->
     #panel { id = element_properties, body = []}
     %<div id=\"element_properties\"> </div>"
   ]}.
+
+
+feed(JSONed) ->
+  Script = wf:f("petri.scheduleTransition(\"~p\");", [JSONed]),
+  wf:wire(#script { script = Script }).

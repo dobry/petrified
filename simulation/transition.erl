@@ -1,5 +1,5 @@
 -module(transition).
--export([init/1, init_arcs/1]).
+-export([init/1, init_arcs/1, send/2]).
 -include("net_records.hrl").
 
 init(Attrs) ->
@@ -40,7 +40,7 @@ loop(Tr) ->
       loop(Tr) % but continue
   after 3000 ->
     %io:format("transition ~p: check~n", [self()]),
-    Res = places:check(lists:append(Tr#transition.arcs_from, Tr#transition.arcs_to)),
+    Res = places:check(lists:append(Tr#transition.arcs_from, Tr#transition.arcs_to), Tr#transition.id),
     case Res of
       stop ->
         io:format("transition: stopped~n");
@@ -68,3 +68,6 @@ pause(Tr) ->
       io:format("play ~p: ~p~n", [self(), Tr]),
       loop(Tr)
   end.
+
+send(Pid, Response) ->
+  Pid ! Response.

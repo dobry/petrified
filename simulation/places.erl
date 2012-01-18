@@ -1,6 +1,6 @@
 -module(places).
 -export([init/1, loop/1]).
--export([check/1]).
+-export([check/2]).
 -include("net_records.hrl").
 
 init(Places_List) ->
@@ -11,11 +11,20 @@ init(Places_List) ->
 
 loop(Dict) ->
   receive
-    {check, Places, Pid} ->
+    {check, Places, Pid, Tr_id} ->
       io:format("places: checking ~p, Places ~p~n", [Pid, Places]),
       {Response, New_dict} = check_places(Dict, Places),
       io:format("places: checked ~p, response ~p~n", [Pid, Response]),
-      Pid ! Response,
+      case Response of
+        ok_launched ->
+          Places1 = lists:map(fun ({Id, Demand}) -> {struct, [{id, Id}, {amount, Demand}]} end, Places),
+          Places2 = {struct, [{id, Tr_id}, {changes, Places1}]},
+          JSONed = mochijson2:encode(Places2),
+          petrinet:feed(JSONed);
+        not_possible ->
+          ok
+      end,
+      transition:send(Pid, Response),
       loop(New_dict);
     stop ->
       ok
@@ -76,8 +85,8 @@ check_place({Id, Demand}, {Dict, true}) ->
 %%% public interface to Places process
 
 %% check if places have enough markers for transition to launch
-check(Places) ->
-  places ! {check, Places, self()},
+check(Places, Id) ->
+  places ! {check, Places, self(), Id},
   receive
     Info -> Info
   end.
