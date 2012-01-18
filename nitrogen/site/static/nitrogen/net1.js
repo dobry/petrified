@@ -509,12 +509,12 @@ net.net_constructor = function (obj)
     if (obj !== "button-cursor" && obj !== 'button-marker' && obj !== "button-delete")
     {
       // turn on object selection
-      canvas.selection = false;
+      canvas.objectSelection = false;
     }
     else 
     {
-      // turn off selection
-      canvas.selection = true;    
+      // turn off objects selection
+      canvas.objectSelection = true;    
     }
   };
   

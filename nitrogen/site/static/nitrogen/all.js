@@ -4910,7 +4910,7 @@ fabric.util.string = {
       }
       
       // we render the top context - last object
-      if (this.selection && this._groupSelector) {
+      if (this.objectSelection && this.selection && this._groupSelector) {
         this._drawSelection();
       }
       
@@ -5451,6 +5451,14 @@ fabric.util.string = {
      */
     interactive:            true,
 
+
+    /**
+     * Indicates whether object selection should be enabled
+     * @property
+     * @type Boolean
+     */
+    objectSelection:        true,
+    
     /**
      * Indicates whether group selection should be enabled
      * @property
@@ -6224,7 +6232,7 @@ fabric.util.string = {
         if (currentObject.intersectsWithRect(selectionX1Y1, selectionX2Y2) || 
             currentObject.isContainedWithinRect(selectionX1Y1, selectionX2Y2)) {
 
-          if (this.selection && currentObject.selectable) {
+          if (this.objectSelection && this.selection && currentObject.selectable) {
             currentObject.setActive(true);
             group.push(currentObject);
           }
@@ -6272,7 +6280,7 @@ fabric.util.string = {
           break;
         }
       }
-      if (target && target.selectable) {
+      if (this.objectSelection && target && target.selectable) {
         return target;
       }
     },
