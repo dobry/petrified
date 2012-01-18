@@ -34,10 +34,8 @@ event(save_to_file) ->
 %% simulation GUI events
 event(sim_build) ->
   io:format("sim_build event~n"),
-  JSON = wf:q(net_data),
-  List = mochijson2:decode(JSON),
-  %io:format("~p~n", [JSON]),
-  %io:format("~p~n", [List]),
+  JSON = wf:q(net_data), % get net data from hidden field in form
+  List = mochijson2:decode(JSON), % decode from JSON to Erlang friendly data
   simulation:init(List),
   ok;
 event(sim_play) ->
@@ -69,35 +67,26 @@ finish_upload_event(_Tag, _FileName, LocalFileData, Node) ->
   io:format(wf:f("Uploaded file: ~s (~p bytes) on node ~s.~nParsing...", [LocalFileData, FileSize, Node])),
   io:format("Uploaded file: ~s (~p bytes) on node ~s.~nParsing...", [LocalFileData, FileSize, Node]),
   
-  % prepare net data
-  case scanner:tokenize(LocalFileData) of
-    {error, Line_number, Reason} ->
-      NewFeed = wf:f("Error: Line:~p Reason:~s", [Line_number, Reason]),
-      io:format("Error: Line:~p Reason:~s", [Line_number, Reason]),
-      wf:update(feed, NewFeed);
-    Scanned ->
-      % new parser
-      case parser:parse(Scanned) of
-        {ok, Parsed1} ->
-          Parsed = {struct,[{elements, Parsed1}]},
+  case petricode:interpret(LocalFileData) of
+    {ok, Parsed1} ->
+      Parsed = {struct,[{elements, Parsed1}]},
 
-          %io:format("parsed~p~n", [Parsed]),
-          JSONed = mochijson2:encode(Parsed),
-          %io:format("got net data~n"),
+      %io:format("parsed~p~n", [Parsed]),
+      JSONed = mochijson2:encode(Parsed),
+      %io:format("got net data~n"),
 
-          % execute js script with data
-          io:format("~s~n", [JSONed]),
-          Script = wf:f("petri.start(~s);", [JSONed]),
-          wf:wire(#script { script = Script }),
-          io:format("lauched js script~n");
-        {error, {Line_number, _Module, Message}} ->
-          %Feed = wf:q(feed),
-          NewFeed = wf:f("Error: Line: ~p Message: ~s", [Line_number, Message]),
-          wf:update(feed, NewFeed)
-      end
-    end,
+      % execute js script with data
+      io:format("~s~n", [JSONed]),
+      Script = wf:f("petri.start(~s);", [JSONed]),
+      wf:wire(#script { script = Script }),
+      io:format("lauched js script~n");
+    {error, {Line_number, _Module, Message}} ->
+      %Feed = wf:q(feed),
+      NewFeed = wf:f("Error: Line: ~p Message: ~s", [Line_number, Message]),
+      wf:update(feed, NewFeed)
+  end,
   ok.
-
+ 
 %% menu context generators
 menu(edit) ->
   Menu = [

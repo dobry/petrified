@@ -15,7 +15,7 @@ to_file(Data) ->
   {ok, Device} = file:open("result", write),  
   
   io:format(Text),
-  printer:print(Device, Res),
+  petricode:print(Device, Res),
   file:close(Device),
   
   {ok, Dir} = file:get_cwd(),

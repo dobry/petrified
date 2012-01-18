@@ -1,5 +1,5 @@
--module(printer).
--export([print/2]).
+-module(petricode).
+-export([print/2, interpret/1]).
 
 print(Device, [Obj | List])->
   {struct, Attributes} = Obj,
@@ -72,3 +72,16 @@ desirable({Name, Value}) ->
     true -> attr({Name, Value});
     _ -> false
   end.
+
+interpret(LocalFileData) ->
+  % prepare net data
+  case scanner:tokenize(LocalFileData) of
+    {error, Line_number, Reason} ->
+      NewFeed = wf:f("Error: Line:~p Reason:~s", [Line_number, Reason]),
+      io:format("Error: Line:~p Reason:~s", [Line_number, Reason]),
+      wf:update(feed, NewFeed);
+    Scanned ->
+      % new parser
+      parser:parse(Scanned)  
+  end.
+
