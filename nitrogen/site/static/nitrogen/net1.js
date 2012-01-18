@@ -67,6 +67,9 @@ net.net_constructor = function (obj)
     
     //disable group selection
     canvas.selection = false;
+    //enable object selection
+    //canvas.objectSelection = true;
+    
     
     // piggyback on `canvas.findTarget`, to fire "object:over" and "object:out" events
     canvas.findTarget = (function(originalFn) {
@@ -227,8 +230,6 @@ net.net_constructor = function (obj)
   that.offsetY = obj ? obj.offsetY : 30;
   init();
 
-  that.canvas = canvas;
-  
   // net elements constructors
   that.constructors = {};
 
@@ -271,7 +272,7 @@ net.net_constructor = function (obj)
       fill: fill,
       height: 12,
       border: true,
-      ctx: that.canvas.getContext()
+      ctx: canvas.getContext()
     });
 
     transition = new fabric.Transition({
@@ -334,7 +335,7 @@ net.net_constructor = function (obj)
       stroke: stroke,
       fill: fill,
       height: 12,
-      ctx: that.canvas.getContext()
+      ctx: canvas.getContext()
     });
     
     // create arrow and its handles
@@ -492,11 +493,7 @@ net.net_constructor = function (obj)
   
   that.clean = function ()
   {
-    console.log("cleaning");
-    // delete net, create new
-    canvas.dispose();
-    init();
-    console.log("cleaned");
+    canvas.clear();
   };
   
   //--------------------------buttons & menus--------------------------------
@@ -513,7 +510,7 @@ net.net_constructor = function (obj)
     }
     else 
     {
-      // turn off objects selection
+      // turn off selection
       canvas.objectSelection = true;    
     }
   };
