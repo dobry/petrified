@@ -24,6 +24,7 @@ init_arcs(Tr) ->
       New_tr = Tr#transition{arcs_to = [{From, -W} | Tr#transition.arcs_to]},
       init_arcs(New_tr);
     ready ->
+      io:format("Transition lauched:~p~n", [Tr]),
       pause(Tr)
   end.
 
@@ -37,7 +38,7 @@ loop(Tr) ->
     Other ->
       io:format("danger! danger! ~p got ~p in wrong time.", [Tr, Other]),
       loop(Tr) % but continue
-  after 500 ->
+  after 3000 ->
     %io:format("transition ~p: check~n", [self()]),
     Res = places:check(lists:append(Tr#transition.arcs_from, Tr#transition.arcs_to)),
     case Res of
@@ -64,6 +65,6 @@ pause(Tr) ->
     stop ->
       ok;
     play ->
-      io:format("play:~p~n", [Tr]),
+      io:format("play ~p: ~p~n", [self(), Tr]),
       loop(Tr)
   end.
