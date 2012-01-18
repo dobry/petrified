@@ -398,6 +398,7 @@ net.net_constructor = function (obj)
   
   that.start = function (obj)
   {
+    canvas.clear();
     that.set(obj.elements);
     //that.renderAll;
   };
