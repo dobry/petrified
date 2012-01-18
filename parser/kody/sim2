@@ -1,0 +1,54 @@
+place
+  markers 1
+  y 176
+  x 525
+  name place1
+end
+place
+  markers 0
+  y 175
+  x 768
+  name place2
+end
+transition
+  angle 0
+  priority 1
+  delay 1
+  y 122
+  x 650
+  name transition1
+end
+transition
+  angle 0
+  priority 1
+  delay 1
+  y 239
+  x 649
+  name transition2
+end
+arc
+  to transition1
+  from place1
+  weight 1
+  name arc1
+end
+arc
+  to place2
+  from transition1
+  weight 1
+  name arc2
+end
+arc
+  to transition2
+  from place2
+  weight 1
+  name arc3
+end
+arc
+  to place1
+  from transition2
+  weight 1
+  name arc4
+end
+
+
