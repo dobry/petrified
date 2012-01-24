@@ -24,7 +24,7 @@ init_arcs(Tr) ->
       New_tr = Tr#transition{arcs_to = [{From, -W} | Tr#transition.arcs_to]},
       init_arcs(New_tr);
     ready ->
-      io:format("Transition lauched:~p~n", [Tr]),
+      io:format("Transition ready:~p~n", [Tr]),
       pause(Tr)
   end.
 
@@ -34,7 +34,7 @@ loop(Tr) ->
     pause ->
       pause(Tr);
     stop ->
-      ok;
+      io:format("transition ~p ~p: stopped~n", [Tr#transition.id, self()]);
     Other ->
       io:format("danger! danger! ~p got ~p in wrong time.", [Tr, Other]),
       loop(Tr) % but continue
@@ -43,7 +43,7 @@ loop(Tr) ->
     Res = places:check(lists:append(Tr#transition.arcs_from, Tr#transition.arcs_to), Tr#transition.id),
     case Res of
       stop ->
-        io:format("transition: stopped~n");
+        io:format("transition ~p ~p: stopped~n", [Tr#transition.id, self()]);
       ok_launched ->
         io:format("transition ~p: launched~n", [Tr#transition.id]),
         %io:format("transition ~p: out, loopin'~n", [Tr]),
@@ -63,7 +63,7 @@ loop(Tr) ->
 pause(Tr) ->
   receive
     stop ->
-      ok;
+      io:format("transition ~p ~p: stopped~n", [Tr#transition.id, self()]);
     play ->
       io:format("play ~p: ~p~n", [self(), Tr]),
       loop(Tr)

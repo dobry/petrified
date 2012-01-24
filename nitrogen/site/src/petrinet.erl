@@ -25,6 +25,28 @@ body() ->
     #panel { id = feed, body = " " }
   ].
 
+counter(Count) ->
+  io:format("1 : ~p : ~p~n", [Count, self()]),
+  receive
+    'INIT' ->
+      Count1 = Count,
+      ok;
+    Num ->
+      Count1 = Num,
+      io:format("2~n")
+  after 0 ->
+    io:format("3~n"),
+    timer:sleep(1000),
+    io:format("4~n"),
+    Count1 = Count,
+    io:format("5~n"),
+    wf:update(feed, integer_to_list(Count)),
+    io:format("6~n"),
+    wf:flush(),
+    io:format("7~n")
+  end,
+  io:format("8 : ~p~n", [Count1]),
+  counter(Count1 + 1).
 
 %%% event handlers
 event(save_to_file) ->
@@ -36,16 +58,20 @@ event(sim_build) ->
   io:format("sim_build event~n"),
   JSON = wf:q(net_data), % get net data from hidden field in form
   List = mochijson2:decode(JSON), % decode from JSON to Erlang friendly data
-  simulation:init(List),
+  {ok, Pid} = wf:comet(fun () -> feed_loop() end, feed_pool),
+  simulation:init({List, Pid}),
+  % wait for simulation feedback
   ok;
 event(sim_play) ->
   %io:format("sim_play event~n"),
   simulation:play();
 event(sim_pause) ->
   %io:format("sim_pause event~n"),
+  %wf:send(feed_pool, 234),
   simulation:pause();
 event(sim_stop) ->
   %io:format("sim_stop event~n"),
+  petrinet:feed(stop),
   simulation:stop().
 
 drop_event(Drag_tag, canvas_drop) ->
@@ -71,7 +97,7 @@ finish_upload_event(_Tag, _FileName, LocalFileData, Node) ->
     {ok, Parsed1} ->
       Parsed = {struct,[{elements, Parsed1}]},
 
-      %io:format("parsed~p~n", [Parsed]),
+      io:format("parsed~p~n", [Parsed]),
       JSONed = mochijson2:encode(Parsed),
       %io:format("got net data~n"),
 
@@ -157,6 +183,35 @@ menu(properties) ->
   ]}.
 
 
-feed(JSONed) ->
-  Script = wf:f("petri.scheduleTransition(\"~p\");", [JSONed]),
-  wf:wire(#script { script = Script }).
+feed_loop() ->
+  receive
+    stop ->
+      io:format("feed_loop() stop ~p~n", [self()]),
+      ok;
+    {ok_launched, Tr_id, Places} ->
+      io:format("feed Places: ~p~n", [Places]),
+      Structurized = lists:map(fun ({Id, Demand}) -> {struct, [{<<"id">>, Id}, {<<"amount">>, Demand}]} end, Places),
+      io:format("feed Structurized: ~p~n", [Structurized]),
+      Changes = {struct, [{id, Tr_id}, {<<"changes">>, Structurized}]},
+      io:format("feed Changes: ~p~n", [Changes]),
+      JSONed = mochijson2:encode(Changes),
+      io:format("feed JSONed: ffff~sffff~n", [JSONed]),
+      Script = wf:f("petri.scheduleTransition(~s);", [JSONed]),
+      io:format("feed Script: ~s~n", [Script]),
+      wf:wire(#script { script = Script }),
+      wf:flush(),
+      feed_loop();
+    'INIT' ->
+      io:format("~p: magic 'INIT' message...~n", [self()]),
+      feed_loop();
+    Any ->
+      io:format("feed_loop got wrong message:~p.~n", [Any]),
+      feed_loop()
+  after 1000 ->
+    io:format("feed_loop() still working~n"),
+    feed_loop()
+  end.
+
+feed(Msg) ->
+  io:format("feed(~p).~n", [Msg]),
+  wf:send(feed_pool, Msg).

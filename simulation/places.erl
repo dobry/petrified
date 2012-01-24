@@ -1,15 +1,19 @@
 -module(places).
--export([init/1, loop/1]).
+-export([init/1, introduce_yourself/1, loop/1]).
 -export([check/2]).
 -include("net_records.hrl").
 
-init(Places_List) ->
+init({Places_List, Feed_Pid}) ->
   Dict = create_dict(Places_List),
   io:format("Dict: ~p~n", [Dict]),
-  register(places, spawn(places, loop, [Dict])),
+  register(places, spawn(places, introduce_yourself, [{Dict, Feed_Pid}])),
   ok.
 
-loop(Dict) ->
+introduce_yourself(State) ->
+  io:format("places ready ~p~n", [self()]),
+  loop(State).
+
+loop({Dict, Feed_Pid}) ->
   receive
     {check, Places, Pid, Tr_id} ->
       io:format("places: checking ~p, Places ~p~n", [Pid, Places]),
@@ -17,15 +21,12 @@ loop(Dict) ->
       io:format("places: checked ~p, response ~p~n", [Pid, Response]),
       case Response of
         ok_launched ->
-          Places1 = lists:map(fun ({Id, Demand}) -> {struct, [{id, Id}, {amount, Demand}]} end, Places),
-          Places2 = {struct, [{id, Tr_id}, {changes, Places1}]},
-          JSONed = mochijson2:encode(Places2),
-          petrinet:feed(JSONed);
+          Feed_Pid ! {ok_launched, Tr_id, Places};%petrinet:feed({ok_launched, Tr_id, Places});
         not_possible ->
           ok
       end,
       transition:send(Pid, Response),
-      loop(New_dict);
+      loop({New_dict, Feed_Pid});
     stop ->
       ok
   end.

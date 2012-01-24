@@ -3,16 +3,16 @@
 -export([build_simulation/1]).
 -include("net_records.hrl").
 
-init(List) ->
-  register(simulation, spawn(simulation, build_simulation, [List])).
+init({List, Feed_Pid}) ->
+  register(simulation, spawn(simulation, build_simulation, [{List, Feed_Pid}])).
 
-build_simulation(List) ->
+build_simulation({List, Feed_Pid}) ->
   {ok, Places, Transitions, Arcs} = group_elements(List),
   %io:format("TT~pTT~n", [Res]),
-  places:init(Places),
+  places:init({Places, Feed_Pid}),
   Pids = init_transitions(Transitions, Arcs),
   % init supervisor with Pids
-  io:format("sim: ready~n"),
+  io:format("sim: ready ~p~n", [self()]),
   loop(Pids).
 
 loop(Pids) ->
@@ -27,7 +27,10 @@ loop(Pids) ->
       loop(Pids);
     stop ->
       io:format("sim: stop~n"),
-      lists:foreach(fun ({_ID, Pid, _Priority}) -> Pid ! stop end, Pids),
+      lists:foreach(fun ({_ID, Pid, _Priority}) ->
+                      io:format("stopping ~p~n", [Pid]),
+                      Pid ! stop 
+                    end, Pids),
       places ! stop
   end.
 
